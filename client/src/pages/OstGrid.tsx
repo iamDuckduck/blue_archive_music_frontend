@@ -30,7 +30,7 @@ const OstGrid = () => {
     return osts.map((ost) => ({
       ...ost,
       volumn_name: ost.ostType.name,
-      volumn: ost.ostType.volume,
+      volume: ost.ostType.volume,
       ostType: undefined,
     }));
   };
