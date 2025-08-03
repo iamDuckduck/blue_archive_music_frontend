@@ -21,7 +21,10 @@ const OstGrid = () => {
     page: 0,
   } as GridPaginationModel);
 
-  const [sortModel, setSortModel] = useState({} as GridSortItem);
+  const [sortModel, setSortModel] = useState({
+    field: "ostNumber",
+    sort: "asc",
+  } as GridSortItem);
 
   const { data } = usePageOST(paginationModel, sortModel);
 
@@ -29,7 +32,7 @@ const OstGrid = () => {
   const flattenAndRename = (osts: OstPage[]) => {
     return osts.map((ost) => ({
       ...ost,
-      volumn_name: ost.ostType.name,
+      volume_name: ost.ostType.name,
       volume: ost.ostType.volume,
       ostType: undefined,
     }));
