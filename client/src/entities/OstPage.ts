@@ -4,8 +4,6 @@ export default interface OstPage {
   author: string;
   ostNumber: number;
   audio_path: string;
-  ostType: {
-    name: string;
-    volume: number;
-  };
+  volumeName: string;
+  volume: number;
 }

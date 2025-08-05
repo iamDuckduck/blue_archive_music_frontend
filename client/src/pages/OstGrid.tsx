@@ -1,12 +1,13 @@
 import {
   DataGrid,
+  type GridFilterItem,
+  type GridFilterModel,
   type GridPaginationModel,
   type GridSortModel,
 } from "@mui/x-data-grid";
 import { ostColumns } from "../data_grid/columns";
 import { Box } from "@mui/material";
 import usePageOST from "../hooks/usePageOST";
-import type OstPage from "../entities/OstPage";
 import NavBar from "../Component/NavBar";
 import { useMemo, useRef, useState } from "react";
 
@@ -26,21 +27,9 @@ const OstGrid = () => {
     sort: "asc",
   } as GridSortItem);
 
-  const { data } = usePageOST(paginationModel, sortModel);
+  const [filterModel, setfilterModel] = useState({} as GridFilterItem);
 
-  // Function to flatten and rename
-  const flattenAndRename = (osts: OstPage[]) => {
-    return osts.map((ost) => ({
-      ...ost,
-      volume_name: ost.ostType.name,
-      volume: ost.ostType.volume,
-      ostType: undefined,
-    }));
-  };
-
-  const flattern_data = data?.content
-    ? flattenAndRename(data?.content)
-    : undefined;
+  const { data } = usePageOST(paginationModel, sortModel, filterModel);
 
   // Following lines are here to prevent `rowCount` from being undefined during the loading
   const rowCountRef = useRef(data?.totalElements || 0);
@@ -53,8 +42,15 @@ const OstGrid = () => {
   }, [data?.totalElements]);
 
   const handleSortrChange = (newSortModel: GridSortModel) => {
+    console.log(newSortModel);
     // reminder it can be undefined
     setSortModel(newSortModel[0]);
+  };
+
+  const handleFilterChange = (newfilterModel: GridFilterModel) => {
+    console.log(newfilterModel);
+    if (newfilterModel.items[0].value) setfilterModel(newfilterModel.items[0]);
+    else setfilterModel({} as GridFilterItem);
   };
 
   return (
@@ -62,7 +58,7 @@ const OstGrid = () => {
       <NavBar></NavBar>
       <DataGrid
         sx={{ minWidth: 1000, minHeight: 500, mt: 10 }}
-        rows={flattern_data}
+        rows={data?.content}
         columns={ostColumns}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
@@ -71,6 +67,8 @@ const OstGrid = () => {
         pageSizeOptions={[5, 10, 20]}
         sortingMode="server"
         onSortModelChange={handleSortrChange}
+        filterMode="server"
+        onFilterModelChange={handleFilterChange}
       />
     </Box>
   );
