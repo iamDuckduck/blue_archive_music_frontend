@@ -41,4 +41,10 @@ export const ostColumns: GridColDef[] = [
     flex: 1,
     filterOperators: getContainsOperator(),
   },
+  {
+    field: "play",
+    headerName: "",
+    filterable: false,
+    sortable: false,
+  },
 ];

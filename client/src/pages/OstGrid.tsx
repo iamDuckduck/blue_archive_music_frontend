@@ -1,34 +1,37 @@
 import {
   DataGrid,
-  type GridFilterItem,
+  type GridColDef,
   type GridFilterModel,
-  type GridPaginationModel,
+  type GridRowId,
   type GridSortModel,
 } from "@mui/x-data-grid";
-import { ostColumns } from "../data_grid/columns";
+import { ostColumns } from "../constants/columns";
 import { Box } from "@mui/material";
 import usePageOST from "../hooks/usePageOST";
 import NavBar from "../Component/NavBar";
-import { useMemo, useRef, useState } from "react";
-
-export interface GridSortItem {
-  field: string;
-  sort: "asc" | "desc" | null | undefined;
-}
+import { useEffect, useMemo, useRef, useState } from "react";
+import { GRID_DEFAULTS } from "../constants/gridDefaults";
+import useAudioPlayer from "../hooks/useAudioPlayer";
+import { PlayButton } from "../Component/PlayButton";
 
 const OstGrid = () => {
-  const [paginationModel, setPaginationModel] = useState({
-    pageSize: 5,
-    page: 0,
-  } as GridPaginationModel);
+  // pagination, sorting and filtering states
+  const [paginationModel, setPaginationModel] = useState(
+    GRID_DEFAULTS.INITIAL_PAGINATION
+  );
+  const [sortModel, setSortModel] = useState(GRID_DEFAULTS.INITIAL_SORT);
+  const [filterModel, setFilterModel] = useState(GRID_DEFAULTS.INITIAL_FILTER);
 
-  const [sortModel, setSortModel] = useState({
-    field: "ostNumber",
-    sort: "asc",
-  } as GridSortItem);
+  const {
+    isPlaying,
+    activeRow,
+    audioUrl,
+    audioRef,
+    setActiveRow,
+    handlePlayButtonClick,
+  } = useAudioPlayer();
 
-  const [filterModel, setfilterModel] = useState({} as GridFilterItem);
-
+  // data query for OST
   const { data } = usePageOST(paginationModel, sortModel, filterModel);
 
   // Following lines are here to prevent `rowCount` from being undefined during the loading
@@ -41,35 +44,66 @@ const OstGrid = () => {
     return rowCountRef.current;
   }, [data?.totalElements]);
 
-  const handleSortrChange = (newSortModel: GridSortModel) => {
-    console.log(newSortModel);
-    // reminder it can be undefined
-    setSortModel(newSortModel[0]);
+  // events
+  const handleSortChange = (newSortModel: GridSortModel) => {
+    // it can be undefined
+    setSortModel(newSortModel[0] ?? GRID_DEFAULTS.INITIAL_SORT);
   };
 
-  const handleFilterChange = (newfilterModel: GridFilterModel) => {
-    console.log(newfilterModel);
-    if (newfilterModel.items[0].value) setfilterModel(newfilterModel.items[0]);
-    else setfilterModel({} as GridFilterItem);
+  const handleFilterChange = (newFilterModel: GridFilterModel) => {
+    setFilterModel(
+      newFilterModel.items[0]?.value
+        ? newFilterModel.items[0]
+        : GRID_DEFAULTS.INITIAL_FILTER
+    );
   };
+
+  const renderPlayButton = (columns: GridColDef[]) =>
+    columns.map((column) =>
+      column.field === "play"
+        ? {
+            ...column,
+            renderCell: (params: { id: GridRowId }) => (
+              <PlayButton
+                rowId={params.id}
+                activeRow={activeRow}
+                isPlaying={isPlaying}
+                onClick={handlePlayButtonClick}
+              ></PlayButton>
+            ),
+          }
+        : column
+    );
+
+  useEffect(() => {
+    if (audioUrl) {
+      audioRef.current?.play();
+    }
+  }, [audioUrl, audioRef]);
 
   return (
     <Box display="flex" flexDirection="column" width="100%" alignItems="center">
       <NavBar></NavBar>
       <DataGrid
-        sx={{ minWidth: 1000, minHeight: 500, mt: 10 }}
+        sx={{ minWidth: 1000, mt: 10 }}
         rows={data?.content}
-        columns={ostColumns}
+        columns={renderPlayButton(ostColumns)}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
         paginationMode="server"
         rowCount={rowCount}
         pageSizeOptions={[5, 10, 20]}
         sortingMode="server"
-        onSortModelChange={handleSortrChange}
+        onSortModelChange={handleSortChange}
         filterMode="server"
         onFilterModelChange={handleFilterChange}
+        disableRowSelectionOnClick
       />
+      <audio
+        ref={audioRef}
+        src={audioUrl}
+        onEnded={() => setActiveRow("")}
+      ></audio>
     </Box>
   );
 };
