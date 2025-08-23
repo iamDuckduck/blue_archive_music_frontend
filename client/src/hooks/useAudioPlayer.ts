@@ -12,23 +12,24 @@ const useAudioPlayer = () => {
     try {
       const response = await fetch(`${OST_AUDIO_ENDPOINT}/${rowId}`);
       const url = await response.text();
-      setAudioUrl(url);
+      if (url == audioUrl) audioRef.current?.play();
+      else {
+        audioRef.current?.pause();
+        setAudioUrl(url);
+      }
     } catch (error) {
       console.error("Failed to fetch audio:", error);
     }
   };
 
   const handlePlayButtonClick = (rowId: GridRowId) => {
-    if (!isPlaying) {
-      setActiveRow(rowId);
-      setIsPlaying(true);
-      playAudio(rowId);
-    } else if (rowId === activeRow) {
+    if (rowId === activeRow && isPlaying) {
       setIsPlaying(false);
       setActiveRow("");
       audioRef.current?.pause();
     } else {
       setActiveRow(rowId);
+      setIsPlaying(true);
       playAudio(rowId);
     }
   };
