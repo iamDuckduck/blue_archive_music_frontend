@@ -27,7 +27,7 @@ const OstGrid = () => {
     activeRow,
     audioUrl,
     audioRef,
-    setActiveRow,
+    handleEnded,
     handlePlayButtonClick,
   } = useAudioPlayer();
 
@@ -96,7 +96,7 @@ const OstGrid = () => {
       <audio
         ref={audioRef}
         src={audioUrl}
-        onEnded={() => setActiveRow("")}
+        onEnded={() => handleEnded()}
       ></audio>
     </Box>
   );
