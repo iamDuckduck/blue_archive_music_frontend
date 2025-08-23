@@ -1,5 +1,5 @@
 import type { GridRowId } from "@mui/x-data-grid";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { OST_AUDIO_ENDPOINT } from "../config/api";
 
 const useAudioPlayer = () => {
@@ -33,6 +33,12 @@ const useAudioPlayer = () => {
       playAudio(rowId);
     }
   };
+
+  useEffect(() => {
+    if (audioUrl) {
+      audioRef.current?.play();
+    }
+  }, [audioUrl, audioRef]);
 
   return {
     isPlaying,

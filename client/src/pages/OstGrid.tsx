@@ -9,7 +9,7 @@ import { ostColumns } from "../constants/columns";
 import { Box } from "@mui/material";
 import usePageOST from "../hooks/usePageOST";
 import NavBar from "../Component/NavBar";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { GRID_DEFAULTS } from "../constants/gridDefaults";
 import useAudioPlayer from "../hooks/useAudioPlayer";
 import { PlayButton } from "../Component/PlayButton";
@@ -74,12 +74,6 @@ const OstGrid = () => {
           }
         : column
     );
-
-  useEffect(() => {
-    if (audioUrl) {
-      audioRef.current?.play();
-    }
-  }, [audioUrl, audioRef]);
 
   return (
     <Box display="flex" flexDirection="column" width="100%" alignItems="center">
