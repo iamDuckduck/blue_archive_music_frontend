@@ -1,11 +1,13 @@
 import type { GridRowId } from "@mui/x-data-grid";
 import { useEffect, useRef, useState } from "react";
 import { OST_AUDIO_ENDPOINT } from "../config/api";
+import { useAudioPlayerContext } from "../context/audio-player-context";
 
 const useAudioPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeRow, setActiveRow] = useState<GridRowId>("");
   const [audioUrl, setAudioUrl] = useState<string | undefined>(undefined);
+  const { setCurrentTrack } = useAudioPlayerContext();
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const fetchAudio = async (rowId: GridRowId) => {
@@ -26,6 +28,12 @@ const useAudioPlayer = () => {
       setActiveRow(rowId);
       setIsPlaying(true);
       const url = await fetchAudio(rowId);
+      setCurrentTrack({
+        title: "",
+        src: url || "",
+        author: "",
+        thumbnail: "string",
+      });
       setAudioUrl(url);
     }
   };
