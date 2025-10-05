@@ -13,6 +13,7 @@ import { useMemo, useRef, useState } from "react";
 import { GRID_DEFAULTS } from "../constants/gridDefaults";
 import useAudioPlayer from "../hooks/useAudioPlayer";
 import { PlayButton } from "../Component/PlayButton";
+import { AudioPlayer } from "../Component/AudioPlayer";
 
 const OstGrid = () => {
   // pagination, sorting and filtering states
@@ -76,36 +77,39 @@ const OstGrid = () => {
     );
 
   return (
-    <Fade in={true} timeout={3000}>
-      <Box
-        display="flex"
-        flexDirection="column"
-        width="100%"
-        alignItems="center"
-      >
-        <NavBar></NavBar>
-        <DataGrid
-          sx={{ minWidth: 1000, mt: 10 }}
-          rows={data?.content}
-          columns={renderPlayButton(ostColumns)}
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-          paginationMode="server"
-          rowCount={rowCount}
-          pageSizeOptions={[5, 10, 20]}
-          sortingMode="server"
-          onSortModelChange={handleSortChange}
-          filterMode="server"
-          onFilterModelChange={handleFilterChange}
-          disableRowSelectionOnClick
-        />
-        <audio
-          ref={audioRef}
-          src={audioUrl}
-          onEnded={() => handleEnded()}
-        ></audio>
-      </Box>
-    </Fade>
+    <>
+      <Fade in={true} timeout={3000}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          width="100%"
+          alignItems="center"
+        >
+          <NavBar></NavBar>
+          <DataGrid
+            sx={{ minWidth: 1000, mt: 10 }}
+            rows={data?.content}
+            columns={renderPlayButton(ostColumns)}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            paginationMode="server"
+            rowCount={rowCount}
+            pageSizeOptions={[5, 10, 20]}
+            sortingMode="server"
+            onSortModelChange={handleSortChange}
+            filterMode="server"
+            onFilterModelChange={handleFilterChange}
+            disableRowSelectionOnClick
+          />
+          <audio
+            ref={audioRef}
+            src={audioUrl}
+            onEnded={() => handleEnded()}
+          ></audio>
+        </Box>
+      </Fade>
+      <AudioPlayer></AudioPlayer>
+    </>
   );
 };
 
