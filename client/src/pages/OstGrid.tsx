@@ -6,7 +6,7 @@ import {
   type GridSortModel,
 } from "@mui/x-data-grid";
 import { ostColumns } from "../constants/columns";
-import { Box } from "@mui/material";
+import { Box, Fade } from "@mui/material";
 import usePageOST from "../hooks/usePageOST";
 import NavBar from "../Component/NavBar";
 import { useMemo, useRef, useState } from "react";
@@ -76,29 +76,36 @@ const OstGrid = () => {
     );
 
   return (
-    <Box display="flex" flexDirection="column" width="100%" alignItems="center">
-      <NavBar></NavBar>
-      <DataGrid
-        sx={{ minWidth: 1000, mt: 10 }}
-        rows={data?.content}
-        columns={renderPlayButton(ostColumns)}
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        paginationMode="server"
-        rowCount={rowCount}
-        pageSizeOptions={[5, 10, 20]}
-        sortingMode="server"
-        onSortModelChange={handleSortChange}
-        filterMode="server"
-        onFilterModelChange={handleFilterChange}
-        disableRowSelectionOnClick
-      />
-      <audio
-        ref={audioRef}
-        src={audioUrl}
-        onEnded={() => handleEnded()}
-      ></audio>
-    </Box>
+    <Fade in={true} timeout={3000}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        width="100%"
+        alignItems="center"
+      >
+        <NavBar></NavBar>
+        <DataGrid
+          sx={{ minWidth: 1000, mt: 10 }}
+          rows={data?.content}
+          columns={renderPlayButton(ostColumns)}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          paginationMode="server"
+          rowCount={rowCount}
+          pageSizeOptions={[5, 10, 20]}
+          sortingMode="server"
+          onSortModelChange={handleSortChange}
+          filterMode="server"
+          onFilterModelChange={handleFilterChange}
+          disableRowSelectionOnClick
+        />
+        <audio
+          ref={audioRef}
+          src={audioUrl}
+          onEnded={() => handleEnded()}
+        ></audio>
+      </Box>
+    </Fade>
   );
 };
 
