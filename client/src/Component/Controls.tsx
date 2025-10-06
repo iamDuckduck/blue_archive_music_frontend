@@ -10,17 +10,35 @@ import {
   BsShuffle,
   BsRepeat,
 } from "react-icons/bs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Controls = () => {
-  const { currentTrack } = useAudioPlayerContext();
+  const { audioRef, currentTrack, isPlaying, setIsPlaying } =
+    useAudioPlayerContext();
   const [isShuffle, setIsShuffle] = useState<boolean>(false);
   const [isRepeat, setIsRepeat] = useState<boolean>(false);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
+  // url is a cached url so depending isPlaying alone causes bug
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentTrack.src) return;
+
+    if (isPlaying) {
+      audio.play();
+    }
+
+    return () => {
+      audio.pause();
+    };
+  }, [isPlaying, currentTrack, audioRef]);
 
   return (
     <Stack direction="row" spacing={1} alignItems="center">
-      <audio src={currentTrack.src} />
+      <audio
+        src={currentTrack.src}
+        ref={audioRef}
+        onEnded={() => setIsPlaying(false)}
+      />
       <IconButton onClick={() => {}} size="small">
         <BsSkipStartFill size={20} />
       </IconButton>
