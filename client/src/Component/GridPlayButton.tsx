@@ -44,7 +44,7 @@ export const GridPlayButton = ({ rowId }: PlayButtonProps) => {
       setIsPlaying(false);
     } else {
       const targetTrack = trackList.find((track) => track.id == rowId);
-      setIsPlaying(true);
+
       const url = await fetchAudio(rowId);
       const image = await fetchImage(rowId);
 
@@ -55,6 +55,7 @@ export const GridPlayButton = ({ rowId }: PlayButtonProps) => {
         author: targetTrack?.author || "",
         thumbnail: image,
       });
+      setIsPlaying(true);
     }
   };
 
