@@ -13,10 +13,17 @@ import {
 import { useEffect, useState } from "react";
 
 const Controls = () => {
-  const { audioRef, currentTrack, isPlaying, setIsPlaying } =
+  const { audioRef, currentTrack, isPlaying, setIsPlaying, setDuration } =
     useAudioPlayerContext();
   const [isShuffle, setIsShuffle] = useState<boolean>(false);
   const [isRepeat, setIsRepeat] = useState<boolean>(false);
+
+  const onLoadedMetadata = () => {
+    const seconds = audioRef.current?.duration;
+    if (seconds !== undefined) {
+      setDuration(seconds);
+    }
+  };
 
   // url is a cached url so depending isPlaying alone causes bug
   useEffect(() => {
@@ -38,6 +45,7 @@ const Controls = () => {
         src={currentTrack.src}
         ref={audioRef}
         onEnded={() => setIsPlaying(false)}
+        onLoadedMetadata={onLoadedMetadata}
       />
       <IconButton onClick={() => {}} size="small">
         <BsSkipStartFill size={20} />
