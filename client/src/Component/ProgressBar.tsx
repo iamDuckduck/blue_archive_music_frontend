@@ -20,8 +20,7 @@ const ProgressBar = () => {
     return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
   }
 
-  const { audioRef } = useAudioPlayerContext();
-  const duration = 200;
+  const { audioRef, duration } = useAudioPlayerContext();
 
   const [position, setPosition] = useState(0);
   return (
