@@ -1,5 +1,4 @@
 import { Box, Slider, styled, Typography } from "@mui/material";
-import { useState } from "react";
 import { useAudioPlayerContext } from "../context/audio-player-context";
 
 const ProgressBar = () => {
@@ -11,7 +10,7 @@ const ProgressBar = () => {
   });
 
   const handleProgressChange = () => {
-    if (audioRef.current) setPosition(audioRef.current.currentTime);
+    if (audioRef.current) setTimeProgress(audioRef.current.currentTime);
   };
 
   const formatDuration = (time: number | undefined): string => {
@@ -26,9 +25,9 @@ const ProgressBar = () => {
     return "00:00";
   };
 
-  const { audioRef, duration } = useAudioPlayerContext();
+  const { audioRef, duration, timeProgress, setTimeProgress } =
+    useAudioPlayerContext();
 
-  const [position, setPosition] = useState(0);
   return (
     <Box
       display="flex"
@@ -37,17 +36,17 @@ const ProgressBar = () => {
       width="100%"
       gap={5}
     >
-      <TinyText>{formatDuration(position)}</TinyText>
+      <TinyText>{formatDuration(timeProgress)}</TinyText>
 
       <Slider
         sx={{
           maxWidth: "80%",
         }}
-        defaultValue={position}
+        defaultValue={0}
         step={1} // For second-level precision
         onChange={handleProgressChange}
       />
-      <TinyText>-{formatDuration(duration - position)}</TinyText>
+      <TinyText>-{formatDuration(duration - timeProgress)}</TinyText>
     </Box>
   );
 };
