@@ -14,11 +14,17 @@ const ProgressBar = () => {
     if (audioRef.current) setPosition(audioRef.current.currentTime);
   };
 
-  function formatDuration(value: number) {
-    const minute = Math.floor(value / 60);
-    const secondLeft = value - minute * 60;
-    return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
-  }
+  const formatDuration = (time: number | undefined): string => {
+    if (typeof time === "number" && !isNaN(time)) {
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60);
+      // Convert to string and pad with leading zeros if necessary
+      const formatMinutes = minutes.toString().padStart(2, "0");
+      const formatSeconds = seconds.toString().padStart(2, "0");
+      return `${formatMinutes}:${formatSeconds}`;
+    }
+    return "00:00";
+  };
 
   const { audioRef, duration } = useAudioPlayerContext();
 
