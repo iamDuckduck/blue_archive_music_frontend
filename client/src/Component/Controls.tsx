@@ -10,11 +10,18 @@ import {
   BsShuffle,
   BsRepeat,
 } from "react-icons/bs";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const Controls = () => {
-  const { audioRef, currentTrack, isPlaying, setIsPlaying, setDuration } =
-    useAudioPlayerContext();
+  const {
+    audioRef,
+    currentTrack,
+    duration,
+    isPlaying,
+    setIsPlaying,
+    setDuration,
+    setTimeProgress,
+  } = useAudioPlayerContext();
   const [isShuffle, setIsShuffle] = useState<boolean>(false);
   const [isRepeat, setIsRepeat] = useState<boolean>(false);
 
@@ -25,19 +32,45 @@ const Controls = () => {
     }
   };
 
-  // url is a cached url so depending isPlaying alone causes bug
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || !currentTrack.src) return;
+  const playAnimationRef = useRef<number | null>(null);
 
-    if (isPlaying) {
-      audio.play();
+  const updateProgress = useCallback(() => {
+    if (audioRef.current && duration) {
+      const currentTime = audioRef.current.currentTime;
+      setTimeProgress(currentTime);
     }
+  }, [audioRef, duration, setTimeProgress]);
 
+  // Start animation loop with RAF
+  const startAnimation = useCallback(() => {
+    if (audioRef.current && duration) {
+      const animate = () => {
+        updateProgress();
+        playAnimationRef.current = requestAnimationFrame(animate);
+      };
+      playAnimationRef.current = requestAnimationFrame(animate);
+    }
+  }, [updateProgress, duration, audioRef]);
+
+  // Effect to handle play/pause and start/stop animation
+  useEffect(() => {
+    if (isPlaying) {
+      audioRef.current?.play();
+      startAnimation();
+    } else {
+      audioRef.current?.pause();
+      if (playAnimationRef.current !== null) {
+        cancelAnimationFrame(playAnimationRef.current);
+        playAnimationRef.current = null;
+      }
+      updateProgress(); // Ensure progress is updated immediately when paused
+    }
     return () => {
-      audio.pause();
+      if (playAnimationRef.current !== null) {
+        cancelAnimationFrame(playAnimationRef.current);
+      }
     };
-  }, [isPlaying, currentTrack, audioRef]);
+  }, [isPlaying, audioRef, startAnimation, updateProgress]);
 
   return (
     <Stack direction="row" spacing={1} alignItems="center">

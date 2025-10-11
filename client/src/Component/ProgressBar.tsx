@@ -9,8 +9,14 @@ const ProgressBar = () => {
     letterSpacing: 0.2,
   });
 
-  const handleProgressChange = () => {
-    if (audioRef.current) setTimeProgress(audioRef.current.currentTime);
+  const handleProgressChange = (
+    _event: React.SyntheticEvent | Event,
+    newValue: number
+  ) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = newValue;
+    }
+    setTimeProgress(newValue);
   };
 
   const formatDuration = (time: number | undefined): string => {
@@ -27,7 +33,6 @@ const ProgressBar = () => {
 
   const { audioRef, duration, timeProgress, setTimeProgress } =
     useAudioPlayerContext();
-
   return (
     <Box
       display="flex"
@@ -45,6 +50,9 @@ const ProgressBar = () => {
         defaultValue={0}
         step={1} // For second-level precision
         onChange={handleProgressChange}
+        value={Math.floor(timeProgress)}
+        min={0}
+        max={duration}
       />
       <TinyText>-{formatDuration(duration - timeProgress)}</TinyText>
     </Box>
