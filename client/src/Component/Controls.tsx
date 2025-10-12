@@ -61,9 +61,8 @@ const Controls = () => {
 
   const skipForward = () => {};
   const skipBackward = () => {};
-  const handlePrevious = () => {};
 
-  const handleNext = async () => {
+  const handleNext = useCallback(async () => {
     const newIndex = isShuffle
       ? Math.floor(Math.random() * trackList.length)
       : trackIndex >= trackList.length - 1
@@ -81,7 +80,27 @@ const Controls = () => {
 
     setTrackIndex(newIndex);
     setCurrentTrack(currentTrackInfo);
-  };
+  }, [isShuffle, trackIndex, trackList, setCurrentTrack, setTrackIndex]);
+
+  const handlePrevious = useCallback(async () => {
+    const newIndex = isShuffle
+      ? Math.floor(Math.random() * trackList.length)
+      : trackIndex === 0
+      ? trackList.length - 1
+      : trackIndex - 1;
+
+    const nextTrack = trackList[newIndex];
+
+    const currentTrackInfo = await buildTrackInfo(
+      OST_AUDIO_ENDPOINT,
+      OST_IMAGE_ENDPOINT,
+      nextTrack?.id || 0,
+      nextTrack as OstPage
+    );
+
+    setTrackIndex(newIndex);
+    setCurrentTrack(currentTrackInfo);
+  }, [isShuffle, trackIndex, trackList, setCurrentTrack, setTrackIndex]);
 
   // Effect to handle play/pause and start/stop animation
   useEffect(() => {
