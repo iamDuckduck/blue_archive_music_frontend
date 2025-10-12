@@ -1,6 +1,7 @@
 import type { GridRowId } from "@mui/x-data-grid";
 import { useEffect, useRef, useState } from "react";
-import { OST_AUDIO_ENDPOINT } from "../config/api";
+import { OST_AUDIO_ENDPOINT } from "../constants/api";
+import APIClient from "../service/api-client";
 
 const useAudioPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -8,14 +9,7 @@ const useAudioPlayer = () => {
   const [audioUrl, setAudioUrl] = useState<string | undefined>(undefined);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const fetchAudio = async (rowId: GridRowId) => {
-    try {
-      const response = await fetch(`${OST_AUDIO_ENDPOINT}/${rowId}`);
-      return await response.text();
-    } catch (error) {
-      console.error("Failed to fetch audio:", error);
-    }
-  };
+  const apiClient = new APIClient<string>(OST_AUDIO_ENDPOINT);
 
   const handlePlayButtonClick = async (rowId: GridRowId) => {
     audioRef.current?.pause();
@@ -25,7 +19,7 @@ const useAudioPlayer = () => {
     } else {
       setActiveRow(rowId);
       setIsPlaying(true);
-      const url = await fetchAudio(rowId);
+      const url = await apiClient.getAudioOst(rowId);
       setAudioUrl(url);
     }
   };
