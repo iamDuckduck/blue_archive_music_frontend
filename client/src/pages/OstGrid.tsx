@@ -9,10 +9,12 @@ import { ostColumns } from "../constants/columns";
 import { Box, Fade } from "@mui/material";
 import usePageOST from "../hooks/usePageOST";
 import NavBar from "../Component/NavBar";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { GRID_DEFAULTS } from "../constants/gridDefaults";
-import useAudioPlayer from "../hooks/useAudioPlayer";
-import { PlayButton } from "../Component/PlayButton";
+import { GridPlayButton } from "../Component/GridPlayButton";
+import { AudioPlayer } from "../Component/AudioPlayer";
+import { useAudioPlayerContext } from "../context/audio-player-context";
+import type OstPage from "../entities/OstPage";
 
 const OstGrid = () => {
   // pagination, sorting and filtering states
@@ -21,15 +23,7 @@ const OstGrid = () => {
   );
   const [sortModel, setSortModel] = useState(GRID_DEFAULTS.INITIAL_SORT);
   const [filterModel, setFilterModel] = useState(GRID_DEFAULTS.INITIAL_FILTER);
-
-  const {
-    isPlaying,
-    activeRow,
-    audioUrl,
-    audioRef,
-    handleEnded,
-    handlePlayButtonClick,
-  } = useAudioPlayer();
+  const { trackList, setTrackList } = useAudioPlayerContext();
 
   // data query for OST
   const { data } = usePageOST(paginationModel, sortModel, filterModel);
@@ -64,48 +58,44 @@ const OstGrid = () => {
         ? {
             ...column,
             renderCell: (params: { id: GridRowId }) => (
-              <PlayButton
-                rowId={params.id}
-                activeRow={activeRow}
-                isPlaying={isPlaying}
-                onClick={handlePlayButtonClick}
-              ></PlayButton>
+              <GridPlayButton rowId={params.id}></GridPlayButton>
             ),
           }
         : column
     );
 
+  useEffect(() => {
+    setTrackList(data?.content || ({} as OstPage[]));
+  }, [data?.content, trackList, setTrackList]);
   return (
-    <Fade in={true} timeout={3000}>
-      <Box
-        display="flex"
-        flexDirection="column"
-        width="100%"
-        alignItems="center"
-      >
-        <NavBar></NavBar>
-        <DataGrid
-          sx={{ minWidth: 1000, mt: 10 }}
-          rows={data?.content}
-          columns={renderPlayButton(ostColumns)}
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-          paginationMode="server"
-          rowCount={rowCount}
-          pageSizeOptions={[5, 10, 20]}
-          sortingMode="server"
-          onSortModelChange={handleSortChange}
-          filterMode="server"
-          onFilterModelChange={handleFilterChange}
-          disableRowSelectionOnClick
-        />
-        <audio
-          ref={audioRef}
-          src={audioUrl}
-          onEnded={() => handleEnded()}
-        ></audio>
-      </Box>
-    </Fade>
+    <>
+      <Fade in={true} timeout={3000}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          width="100%"
+          alignItems="center"
+        >
+          <NavBar></NavBar>
+          <DataGrid
+            sx={{ minWidth: 1000, mt: 10 }}
+            rows={data?.content}
+            columns={renderPlayButton(ostColumns)}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            paginationMode="server"
+            rowCount={rowCount}
+            pageSizeOptions={[5, 10, 20]}
+            sortingMode="server"
+            onSortModelChange={handleSortChange}
+            filterMode="server"
+            onFilterModelChange={handleFilterChange}
+            disableRowSelectionOnClick
+          />
+        </Box>
+      </Fade>
+      <AudioPlayer></AudioPlayer>
+    </>
   );
 };
 
