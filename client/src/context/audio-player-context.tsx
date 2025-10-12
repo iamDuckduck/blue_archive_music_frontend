@@ -29,6 +29,8 @@ interface AudioPlayerContextType {
   setTimeProgress: Dispatch<SetStateAction<number>>;
   duration: number;
   setDuration: Dispatch<SetStateAction<number>>;
+  trackIndex: number;
+  setTrackIndex: Dispatch<SetStateAction<number>>;
 }
 const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(
   undefined
@@ -36,6 +38,7 @@ const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(
 export const AudioPlayerProvider = ({ children }: { children: ReactNode }) => {
   const [currentTrack, setCurrentTrack] = useState<Track>({} as Track);
   const [trackList, setTrackList] = useState<OstPage[]>({} as OstPage[]);
+  const [trackIndex, setTrackIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [timeProgress, setTimeProgress] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
@@ -53,6 +56,8 @@ export const AudioPlayerProvider = ({ children }: { children: ReactNode }) => {
     setTimeProgress,
     duration,
     setDuration,
+    trackIndex,
+    setTrackIndex,
   };
   return (
     <AudioPlayerContext.Provider value={contextValue}>

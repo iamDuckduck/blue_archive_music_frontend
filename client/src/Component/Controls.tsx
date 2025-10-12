@@ -11,6 +11,8 @@ import {
   BsRepeat,
 } from "react-icons/bs";
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { GridRowId } from "@mui/x-data-grid";
+import { OST_AUDIO_ENDPOINT, OST_IMAGE_ENDPOINT } from "../config/api";
 
 const Controls = () => {
   const {
@@ -21,6 +23,10 @@ const Controls = () => {
     setIsPlaying,
     setDuration,
     setTimeProgress,
+    trackIndex,
+    setTrackIndex,
+    setCurrentTrack,
+    trackList,
   } = useAudioPlayerContext();
   const [isShuffle, setIsShuffle] = useState<boolean>(false);
   const [isRepeat, setIsRepeat] = useState<boolean>(false);
@@ -52,6 +58,49 @@ const Controls = () => {
     }
   }, [updateProgress, duration, audioRef]);
 
+  const skipForward = () => {};
+  const skipBackward = () => {};
+  const handlePrevious = () => {};
+
+  const fetchAudio = async (rowId: GridRowId) => {
+    try {
+      const response = await fetch(`${OST_AUDIO_ENDPOINT}/${rowId}`);
+      return await response.text();
+    } catch (error) {
+      console.error("Failed to fetch audio:", error);
+    }
+  };
+
+  const fetchImage = async (rowId: GridRowId) => {
+    try {
+      const response = await fetch(`${OST_IMAGE_ENDPOINT}/${rowId}`);
+      return await response.text();
+    } catch (error) {
+      console.error("Failed to fetch image:", error);
+    }
+  };
+
+  const handleNext = async () => {
+    const newIndex = isShuffle
+      ? Math.floor(Math.random() * trackList.length)
+      : trackIndex >= trackList.length - 1
+      ? 0
+      : trackIndex + 1;
+
+    const url = await fetchAudio(trackList[newIndex]?.id);
+
+    const image = await fetchImage(trackList[newIndex]?.id);
+
+    setTrackIndex(newIndex);
+    setCurrentTrack({
+      id: trackList[newIndex]?.id || 0,
+      name: trackList[newIndex]?.name || "",
+      src: url || "",
+      author: trackList[newIndex]?.author || "",
+      thumbnail: image,
+    });
+  };
+
   // Effect to handle play/pause and start/stop animation
   useEffect(() => {
     if (isPlaying) {
@@ -80,10 +129,10 @@ const Controls = () => {
         onEnded={() => setIsPlaying(false)}
         onLoadedMetadata={onLoadedMetadata}
       />
-      <IconButton onClick={() => {}} size="small">
+      <IconButton onClick={handlePrevious} size="small">
         <BsSkipStartFill size={20} />
       </IconButton>
-      <IconButton onClick={() => {}} size="small">
+      <IconButton onClick={skipBackward} size="small">
         <BsFillRewindFill size={20} />
       </IconButton>
       <IconButton onClick={() => setIsPlaying((prev) => !prev)} size="medium">
@@ -93,10 +142,10 @@ const Controls = () => {
           <BsFillPlayFill size={30} />
         )}
       </IconButton>
-      <IconButton onClick={() => {}} size="small">
+      <IconButton onClick={skipForward} size="small">
         <BsFillFastForwardFill size={20} />
       </IconButton>
-      <IconButton onClick={() => {}} size="small">
+      <IconButton onClick={handleNext} size="small">
         <BsSkipEndFill size={20} />
       </IconButton>
       <IconButton
