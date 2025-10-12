@@ -59,8 +59,19 @@ const Controls = () => {
     }
   }, [updateProgress, duration, audioRef]);
 
-  const skipForward = () => {};
-  const skipBackward = () => {};
+  const skipForward = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime += 15;
+      updateProgress();
+    }
+  };
+
+  const skipBackward = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime -= 15;
+      updateProgress();
+    }
+  };
 
   const handleNext = useCallback(async () => {
     const newIndex = isShuffle
