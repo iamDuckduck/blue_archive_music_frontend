@@ -6,7 +6,6 @@ export interface FetchPageResponse<T> {
   totalElements: number;
   size: number;
 }
-
 // TODO use env variable to config baseURL bewteen dev and production
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8080",
@@ -26,9 +25,9 @@ class APIClient<T> {
       .then((res) => res.data);
   };
 
-  getAudioOst = (id: number) => {
+  getAudioOst = (id: string | number) => {
     return axiosInstance
-      .get(this.endpoint + "/audio/" + id)
+      .get<string>(`${this.endpoint}/${id}`)
       .then((res) => res.data);
   };
 }
