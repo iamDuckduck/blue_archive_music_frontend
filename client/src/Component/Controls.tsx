@@ -11,8 +11,9 @@ import {
   BsRepeat,
 } from "react-icons/bs";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { GridRowId } from "@mui/x-data-grid";
-import { OST_AUDIO_ENDPOINT, OST_IMAGE_ENDPOINT } from "../config/api";
+import { OST_AUDIO_ENDPOINT, OST_IMAGE_ENDPOINT } from "../constants/api";
+import type OstPage from "../entities/OstPage";
+import { buildTrackInfo } from "../utils/buildTrackInfo";
 
 const Controls = () => {
   const {
@@ -62,24 +63,6 @@ const Controls = () => {
   const skipBackward = () => {};
   const handlePrevious = () => {};
 
-  const fetchAudio = async (rowId: GridRowId) => {
-    try {
-      const response = await fetch(`${OST_AUDIO_ENDPOINT}/${rowId}`);
-      return await response.text();
-    } catch (error) {
-      console.error("Failed to fetch audio:", error);
-    }
-  };
-
-  const fetchImage = async (rowId: GridRowId) => {
-    try {
-      const response = await fetch(`${OST_IMAGE_ENDPOINT}/${rowId}`);
-      return await response.text();
-    } catch (error) {
-      console.error("Failed to fetch image:", error);
-    }
-  };
-
   const handleNext = async () => {
     const newIndex = isShuffle
       ? Math.floor(Math.random() * trackList.length)
@@ -87,18 +70,17 @@ const Controls = () => {
       ? 0
       : trackIndex + 1;
 
-    const url = await fetchAudio(trackList[newIndex]?.id);
+    const nextTrack = trackList[newIndex];
 
-    const image = await fetchImage(trackList[newIndex]?.id);
+    const currentTrackInfo = await buildTrackInfo(
+      OST_AUDIO_ENDPOINT,
+      OST_IMAGE_ENDPOINT,
+      nextTrack?.id || 0,
+      nextTrack as OstPage
+    );
 
     setTrackIndex(newIndex);
-    setCurrentTrack({
-      id: trackList[newIndex]?.id || 0,
-      name: trackList[newIndex]?.name || "",
-      src: url || "",
-      author: trackList[newIndex]?.author || "",
-      thumbnail: image,
-    });
+    setCurrentTrack(currentTrackInfo);
   };
 
   // Effect to handle play/pause and start/stop animation

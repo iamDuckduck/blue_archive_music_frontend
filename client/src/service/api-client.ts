@@ -30,6 +30,12 @@ class APIClient<T> {
       .get<string>(`${this.endpoint}/${id}`)
       .then((res) => res.data);
   };
+
+  getImageOst = (id: string | number) => {
+    return axiosInstance
+      .get<string>(`${this.endpoint}/${id}`)
+      .then((res) => res.data);
+  };
 }
 
 export default APIClient;
