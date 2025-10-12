@@ -113,6 +113,14 @@ const Controls = () => {
     setCurrentTrack(currentTrackInfo);
   }, [isShuffle, trackIndex, trackList, setCurrentTrack, setTrackIndex]);
 
+  const handleOnEnded = () => {
+    if (isRepeat) {
+      audioRef.current?.play();
+    } else {
+      handleNext(); // This function should handle both shuffle and non-shuffle scenarios
+    }
+  };
+
   // Effect to handle play/pause and start/stop animation
   useEffect(() => {
     if (isPlaying) {
@@ -138,7 +146,7 @@ const Controls = () => {
       <audio
         src={currentTrack.src}
         ref={audioRef}
-        onEnded={() => setIsPlaying(false)}
+        onEnded={handleOnEnded}
         onLoadedMetadata={onLoadedMetadata}
       />
       <IconButton onClick={handlePrevious} size="small">
