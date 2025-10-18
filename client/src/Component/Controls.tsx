@@ -11,7 +11,6 @@ import {
   BsRepeat,
 } from "react-icons/bs";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { OST_AUDIO_ENDPOINT, OST_IMAGE_ENDPOINT } from "../constants/api";
 import type OstPage from "../entities/OstPage";
 import { buildTrackInfo } from "../utils/buildTrackInfo";
 
@@ -73,7 +72,7 @@ const Controls = () => {
     }
   };
 
-  const handleNext = useCallback(async () => {
+  const handleNext = useCallback(() => {
     const newIndex = isShuffle
       ? Math.floor(Math.random() * trackList.length)
       : trackIndex >= trackList.length - 1
@@ -81,19 +80,13 @@ const Controls = () => {
       : trackIndex + 1;
 
     const nextTrack = trackList[newIndex];
-
-    const currentTrackInfo = await buildTrackInfo(
-      OST_AUDIO_ENDPOINT,
-      OST_IMAGE_ENDPOINT,
-      nextTrack?.id || 0,
-      nextTrack as OstPage
-    );
+    const currentTrackInfo = buildTrackInfo(nextTrack as OstPage);
 
     setTrackIndex(newIndex);
     setCurrentTrack(currentTrackInfo);
   }, [isShuffle, trackIndex, trackList, setCurrentTrack, setTrackIndex]);
 
-  const handlePrevious = useCallback(async () => {
+  const handlePrevious = useCallback(() => {
     const newIndex = isShuffle
       ? Math.floor(Math.random() * trackList.length)
       : trackIndex === 0
@@ -102,12 +95,7 @@ const Controls = () => {
 
     const nextTrack = trackList[newIndex];
 
-    const currentTrackInfo = await buildTrackInfo(
-      OST_AUDIO_ENDPOINT,
-      OST_IMAGE_ENDPOINT,
-      nextTrack?.id || 0,
-      nextTrack as OstPage
-    );
+    const currentTrackInfo = buildTrackInfo(nextTrack as OstPage);
 
     setTrackIndex(newIndex);
     setCurrentTrack(currentTrackInfo);
