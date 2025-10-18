@@ -1,27 +1,13 @@
+import { PUBLIC_URL_PREFIX } from "../constants/api";
 import type { Track } from "../context/audio-player-context";
 import type OstPage from "../entities/OstPage";
-import APIClient from "../service/api-client";
 
-export const buildTrackInfo = async (
-  audioEndpoint: string,
-  imageEndpoint: string,
-  id: string | number,
-  targetTrack: OstPage
-): Promise<Track> => {
-  const audioApiClient = new APIClient<string>(audioEndpoint);
-  const imageApiClient = new APIClient<string>(imageEndpoint);
-
-  const url = await audioApiClient.getAudioOst(id);
-
-  const image = await imageApiClient.getImageOst(id);
-
-  const currentTrackInfo = {
+export const buildTrackInfo = (targetTrack: OstPage): Track => {
+  return {
     id: targetTrack?.id || 0,
     name: targetTrack?.name || "",
-    src: url || "",
+    src: PUBLIC_URL_PREFIX + targetTrack.audio_path || "",
     author: targetTrack?.author || "",
-    thumbnail: image,
+    thumbnail: PUBLIC_URL_PREFIX + targetTrack.image_path,
   };
-
-  return currentTrackInfo;
 };
