@@ -1,4 +1,4 @@
-export default interface OstPage {
+export default interface Ost {
   id: number;
   name: string;
   author: string;
