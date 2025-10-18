@@ -14,7 +14,7 @@ import { GRID_DEFAULTS } from "../constants/gridDefaults";
 import { GridPlayButton } from "../Component/GridPlayButton";
 import { AudioPlayer } from "../Component/AudioPlayer";
 import { useAudioPlayerContext } from "../context/audio-player-context";
-import type OstPage from "../entities/OstPage";
+import type Ost from "../entities/OstPage";
 
 const OstGrid = () => {
   // pagination, sorting and filtering states
@@ -65,7 +65,7 @@ const OstGrid = () => {
     );
 
   useEffect(() => {
-    setTrackList(data?.content || ({} as OstPage[]));
+    setTrackList(data?.content || ({} as Ost[]));
   }, [data?.content, trackList, setTrackList]);
   return (
     <>

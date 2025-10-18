@@ -4,7 +4,7 @@ import PauseIcon from "@mui/icons-material/Pause";
 import type { GridRowId } from "@mui/x-data-grid";
 import { useAudioPlayerContext } from "../context/audio-player-context";
 import { buildTrackInfo } from "../utils/buildTrackInfo";
-import type OstPage from "../entities/OstPage";
+import type Ost from "../entities/OstPage";
 
 interface PlayButtonProps {
   rowId: GridRowId;
@@ -26,7 +26,7 @@ export const GridPlayButton = ({ rowId }: PlayButtonProps) => {
       setIsPlaying(false);
     } else {
       const targetTrack = trackList.find((track) => track.id == rowId);
-      const currentTrackInfo = buildTrackInfo(targetTrack as OstPage);
+      const currentTrackInfo = buildTrackInfo(targetTrack as Ost);
 
       setCurrentTrack(currentTrackInfo);
       setIsPlaying(true);
