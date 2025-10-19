@@ -36,6 +36,10 @@ class APIClient<T> {
       .get<string>(`${this.endpoint}/${id}`)
       .then((res) => res.data);
   };
+
+  getAllOstType = () => {
+    return axiosInstance.get<T[]>(this.endpoint).then((res) => res.data);
+  };
 }
 
 export default APIClient;
