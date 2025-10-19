@@ -33,7 +33,7 @@ const Home = () => {
               padding: 1.5,
             }}
             onClick={() => {
-              navigate("/OST");
+              navigate("/main");
             }}
           >
             Click here to play
