@@ -4,8 +4,9 @@ import ms from "ms";
 import type Ost from "../entities/OstPage";
 import type { GridSortItem } from "../pages/OstGrid";
 import type { GridFilterItem, GridPaginationModel } from "@mui/x-data-grid";
+import { OST_PAGE_URL } from "../constants/api";
 
-const apiClient = new APIClient<Ost>("/user/ost");
+const apiClient = new APIClient<Ost>(OST_PAGE_URL);
 
 const usePageOST = (
   paginationModel: GridPaginationModel,
