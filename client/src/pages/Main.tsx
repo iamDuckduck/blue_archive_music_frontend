@@ -1,69 +1,31 @@
-import {
-  Box,
-  Button,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Paper,
-} from "@mui/material";
-import { useState } from "react";
+import { Box, Paper } from "@mui/material";
+import LeftSidePanel from "../Component/LeftSidePanel";
 const Main = () => {
-  const [open, setOpen] = useState(false);
-
-  const toggleDrawer = (newOpen: boolean) => () => {
-    setOpen(newOpen);
-  };
-
-  const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
-      <List>
-        <ListItem key={1} disablePadding>
-          <ListItemButton>
-            <ListItemIcon></ListItemIcon>
-            <ListItemText primary={"ost"} />
-          </ListItemButton>
-        </ListItem>
-      </List>
-    </Box>
-  );
   return (
     <Box
       sx={{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
+        height: "100dvh",
       }}
     >
       <Paper
         elevation={3}
-        square={false}
         sx={{
-          minHeight: "80vh",
-          minWidth: "80vw",
+          height: "600px",
+          width: "1200px",
           display: "flex",
-          background: "linear-gradient(135deg, #f5e1f7, #a3c6ff)",
+          background: "linear-gradient(135deg, #f5e1f7 0%, #a3c6ff 100%)",
+          borderRadius: 2,
         }}
       >
-        <Box
-          sx={{ display: "flex", "flex-direction": "column", flexBasis: "25%" }}
-        >
-          <Button sx={{ flexBasis: "10%" }} onClick={toggleDrawer(true)}>
-            Open drawer
-          </Button>
-          <Drawer open={open} onClose={toggleDrawer(false)}>
-            {DrawerList}
-          </Drawer>
+        <LeftSidePanel></LeftSidePanel>
 
-          <Box sx={{ flexBasis: "20%" }}>OST</Box>
-          <Box sx={{ flexBasis: "70%" }}>hhh</Box>
-        </Box>
         <Box
           sx={{
-            p: 3,
+            flexGrow: 1,
+            p: 10,
           }}
           width="100%"
           borderRadius="10px"
