@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Card,
+  CardActionArea,
   CardMedia,
   Drawer,
   List,
@@ -11,9 +12,10 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useOstType from "../hooks/useOstType";
 import { PUBLIC_URL_PREFIX } from "../constants/api";
+import { useAudioPlayerContext } from "../context/audio-player-context";
 
 const LeftSidePanel = () => {
   // drawer
@@ -34,9 +36,14 @@ const LeftSidePanel = () => {
     </Box>
   );
 
+  const { setCurrentType } = useAudioPlayerContext();
+
   // ostTypeInfo
   const { data } = useOstType();
 
+  useEffect(() => {
+    if (data) setCurrentType(data[0]);
+  }, [data, setCurrentType]);
   return (
     <Box
       sx={{
@@ -74,13 +81,18 @@ const LeftSidePanel = () => {
               key={ostType.id}
               sx={{
                 boxShadow: 1,
+                ":hover": {
+                  boxShadow: 20,
+                },
               }}
             >
-              <CardMedia
-                sx={{ width: 280, height: 280 }}
-                image={PUBLIC_URL_PREFIX + ostType.image_path}
-                title={ostType.name}
-              />
+              <CardActionArea onClick={() => setCurrentType(ostType)}>
+                <CardMedia
+                  sx={{ width: 280, height: 280 }}
+                  image={PUBLIC_URL_PREFIX + ostType.image_path}
+                  title={ostType.name}
+                />
+              </CardActionArea>
             </Card>
           ))}
         </Box>
