@@ -9,6 +9,7 @@ import {
   useRef,
 } from "react";
 import type Ost from "../entities/OstPage";
+import type OstType from "../entities/OstType";
 
 export interface Track {
   id: number;
@@ -31,6 +32,8 @@ interface AudioPlayerContextType {
   setDuration: Dispatch<SetStateAction<number>>;
   trackIndex: number;
   setTrackIndex: Dispatch<SetStateAction<number>>;
+  currentType: OstType;
+  setCurrentType: Dispatch<SetStateAction<OstType>>;
 }
 const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(
   undefined
@@ -42,6 +45,7 @@ export const AudioPlayerProvider = ({ children }: { children: ReactNode }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [timeProgress, setTimeProgress] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
+  const [currentType, setCurrentType] = useState<OstType>({} as OstType);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const contextValue = {
@@ -58,6 +62,8 @@ export const AudioPlayerProvider = ({ children }: { children: ReactNode }) => {
     setDuration,
     trackIndex,
     setTrackIndex,
+    currentType,
+    setCurrentType,
   };
   return (
     <AudioPlayerContext.Provider value={contextValue}>
