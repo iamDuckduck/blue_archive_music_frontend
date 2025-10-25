@@ -1,10 +1,10 @@
 import {
   Box,
-  Button,
   Card,
   CardActionArea,
   CardMedia,
   Drawer,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import useOstType from "../hooks/useOstType";
 import { PUBLIC_URL_PREFIX } from "../constants/api";
 import { useAudioPlayerContext } from "../context/audio-player-context";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const LeftSidePanel = () => {
   // drawer
@@ -58,14 +59,29 @@ const LeftSidePanel = () => {
       <Drawer open={open} onClose={toggleDrawer(false)}>
         {DrawerList}
       </Drawer>
-      <Button sx={{ flexBasis: "10%" }} onClick={toggleDrawer(true)}>
-        Open drawer
-      </Button>
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-start",
+          flexBasis: "10%",
+        }}
+      >
+        <IconButton sx={{ p: 2 }} onClick={toggleDrawer(true)}>
+          <MenuIcon />
+        </IconButton>
+      </Box>
 
       {/* Track Type Text*/}
-      <Typography textAlign="center" sx={{ flexBasis: "20%", py: 1 }}>
-        OST
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexBasis: "20%",
+          py: 1,
+        }}
+      ></Box>
 
       {/* Track Type */}
       <Box
@@ -73,8 +89,17 @@ const LeftSidePanel = () => {
           overflowY: "auto",
         }}
       >
+        <Typography sx={{ fontSize: 14, px: 2 }}>OST Tracks</Typography>
         <Box
-          sx={{ display: "flex", flexDirection: "column", gap: 2, padding: 2 }}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 3,
+            px: 2,
+            py: 1,
+          }}
         >
           {data?.map((ostType) => (
             <Card
@@ -88,7 +113,7 @@ const LeftSidePanel = () => {
             >
               <CardActionArea onClick={() => setCurrentType(ostType)}>
                 <CardMedia
-                  sx={{ width: 280, height: 280 }}
+                  sx={{ width: 200, height: 200 }}
                   image={PUBLIC_URL_PREFIX + ostType.image_path}
                   title={ostType.name}
                 />
