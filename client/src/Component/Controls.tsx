@@ -11,7 +11,7 @@ import {
   BsRepeat,
 } from "react-icons/bs";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type Ost from "../entities/OstPage";
+import type OstPage from "../entities/OstPage";
 import { buildTrackInfo } from "../utils/buildTrackInfo";
 
 const Controls = () => {
@@ -80,7 +80,7 @@ const Controls = () => {
       : trackIndex + 1;
 
     const nextTrack = trackList[newIndex];
-    const currentTrackInfo = buildTrackInfo(nextTrack as Ost);
+    const currentTrackInfo = buildTrackInfo(nextTrack as OstPage);
 
     setTrackIndex(newIndex);
     setCurrentTrack(currentTrackInfo);
@@ -95,7 +95,7 @@ const Controls = () => {
 
     const nextTrack = trackList[newIndex];
 
-    const currentTrackInfo = buildTrackInfo(nextTrack as Ost);
+    const currentTrackInfo = buildTrackInfo(nextTrack as OstPage);
 
     setTrackIndex(newIndex);
     setCurrentTrack(currentTrackInfo);
