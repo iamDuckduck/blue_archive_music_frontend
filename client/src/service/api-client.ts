@@ -40,6 +40,12 @@ class APIClient<T> {
   getAllOstType = () => {
     return axiosInstance.get<T[]>(this.endpoint).then((res) => res.data);
   };
+
+  getOstByVolume = (config: AxiosRequestConfig) => {
+    return axiosInstance
+      .get<T[]>(this.endpoint, config)
+      .then((res) => res.data);
+  };
 }
 
 export default APIClient;
