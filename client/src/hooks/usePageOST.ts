@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import APIClient from "../service/api-client";
 import ms from "ms";
-import type Ost from "../entities/OstPage";
+import type OstPage from "../entities/OstPage";
 import type { GridSortItem } from "../pages/OstGrid";
 import type { GridFilterItem, GridPaginationModel } from "@mui/x-data-grid";
 import { OST_PAGE_URL } from "../constants/api";
 
-const apiClient = new APIClient<Ost>(OST_PAGE_URL);
+const apiClient = new APIClient<OstPage>(OST_PAGE_URL);
 
 const usePageOST = (
   paginationModel: GridPaginationModel,

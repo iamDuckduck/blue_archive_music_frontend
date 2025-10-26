@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import APIClient from "../service/api-client";
-import type Ost from "../entities/OstPage";
+import type OstPage from "../entities/OstPage";
 
-const apiClient = new APIClient<Ost>("/user/ost");
+const apiClient = new APIClient<OstPage>("/user/ost");
 
 const useAudioOst = (id: number | null) => {
   return useQuery({
