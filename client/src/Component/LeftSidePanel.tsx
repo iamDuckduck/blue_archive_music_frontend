@@ -52,7 +52,6 @@ const LeftSidePanel = () => {
         flexDirection: "column",
         flexBasis: "25%",
         height: "100%",
-        borderRight: "3px solid #1b46e466",
       }}
     >
       {/* drawer */}
