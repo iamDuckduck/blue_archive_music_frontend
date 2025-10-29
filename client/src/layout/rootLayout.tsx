@@ -12,6 +12,7 @@ const rootLayout = () => {
     pointerEvents: "none", // Disables user interaction
     zIndex: -1,
     opacity: 0.8,
+    filter: "blur(4px)",
   };
 
   return (
