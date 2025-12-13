@@ -5,6 +5,7 @@ import type { GridRowId } from "@mui/x-data-grid";
 import { useAudioPlayerContext } from "../context/audio-player-context";
 import { buildTrackInfo } from "../utils/buildTrackInfo";
 import type OstPage from "../entities/OstPage";
+import APIClient from "../service/api-client";
 
 interface PlayButtonProps {
   rowId: GridRowId;
@@ -20,6 +21,8 @@ export const GridPlayButton = ({ rowId }: PlayButtonProps) => {
     isPlaying,
   } = useAudioPlayerContext();
 
+  const apiClient = new APIClient<OstPage>("/user/ost/audio");
+
   const onClick = (rowId: GridRowId) => {
     audioRef.current?.pause();
     if (rowId === currentTrack.id && isPlaying) {
@@ -27,6 +30,8 @@ export const GridPlayButton = ({ rowId }: PlayButtonProps) => {
     } else {
       const targetTrack = trackList.find((track) => track.id == rowId);
       const currentTrackInfo = buildTrackInfo(targetTrack as OstPage);
+      // this will make the playcount +1
+      apiClient.getAudioOst(currentTrackInfo.id);
 
       setCurrentTrack(currentTrackInfo);
       setIsPlaying(true);
