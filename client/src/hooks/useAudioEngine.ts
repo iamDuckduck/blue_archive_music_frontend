@@ -14,7 +14,8 @@ import { useAudioPlayerContext } from "../context/audio-player-context";
  * touch RAF or play()/pause() directly.
  */
 const useAudioEngine = () => {
-  const { audioRef, isPlaying, setTimeProgress } = useAudioPlayerContext();
+  const { audioRef, isPlaying, setIsPlaying, setTimeProgress, currentTrack } =
+    useAudioPlayerContext();
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -26,7 +27,12 @@ const useAudioEngine = () => {
     };
 
     if (isPlaying) {
-      audioRef.current?.play();
+      // play() returns a Promise; browsers (esp. Chrome) reject it
+      // when no user gesture has happened yet (autoplay policy).
+      // Reset isPlaying so the UI reflects reality.
+      audioRef.current?.play().catch(() => {
+        setIsPlaying(false);
+      });
       rafRef.current = requestAnimationFrame(tick);
     } else {
       audioRef.current?.pause();
@@ -38,7 +44,9 @@ const useAudioEngine = () => {
         rafRef.current = null;
       }
     };
-  }, [isPlaying, audioRef, setTimeProgress]);
+    // currentTrack.src is included so the engine re-runs on track change:
+    // cleanup cancels the old RAF, the new run calls play() on the new <audio src>.
+  }, [isPlaying, audioRef, setTimeProgress, setIsPlaying, currentTrack?.src]);
 };
 
 export default useAudioEngine;
