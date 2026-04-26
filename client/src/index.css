@@ -1,77 +1,102 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
+/* ── Base reset ── */
 body,
 html {
   margin: 0;
   padding: 0;
+  font-family: "Space Grotesk", sans-serif;
+  overflow: hidden;
 }
+
 * {
   box-sizing: border-box;
 }
-/* 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+
+/* ── Material Symbols defaults ── */
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
 }
 
-body {
-  margin: 0;
+/* ── Glass panel ── */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ── Blue Archive bordered text (white with dark stroke) ── */
+.ba-bordered-text {
+  color: white;
+  text-shadow:
+    -1.5px -1.5px 0 #244b6f,
+    1.5px -1.5px 0 #244b6f,
+    -1.5px 1.5px 0 #244b6f,
+    1.5px 1.5px 0 #244b6f,
+    0px 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Sidebar button (clip-path + transitions) ── */
+.ba-sidebar-button {
+  width: 110px;
+  height: 140px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid #e2e8f0;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s ease-in-out;
+  clip-path: polygon(0 0, 100% 0, 100% 90%, 90% 100%, 0 100%);
+  margin-bottom: 0.5rem;
+  text-decoration: none;
+  color: #64748b;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.ba-sidebar-button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0px rgba(0, 191, 255, 0.2);
+  border-color: #00bfff;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.ba-sidebar-button.active {
+  background: #00bfff;
+  border-color: #00bfff;
+  color: white !important;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-} */
+.ba-sidebar-button.active span {
+  color: white !important;
+}
+
+/* ── Tactical album clip-path ── */
+.tactical-album-small {
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%);
+}
+
+/* ── Diamond progress handle ── */
+.diamond-handle {
+  width: 10px;
+  height: 10px;
+  background: white;
+  border: 2px solid #00bfff;
+  transform: rotate(45deg);
+  box-shadow: 0 0 10px rgba(0, 191, 255, 0.8);
+}
+
+/* ── Shuffle / badge clip ── */
+.shuffle-button-clip {
+  clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+}
+
+/* ── Custom scrollbar ── */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 191, 255, 0.2);
+  border-radius: 10px;
+}

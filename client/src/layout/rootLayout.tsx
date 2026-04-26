@@ -1,51 +1,54 @@
-import { CardMedia } from "@mui/material";
 import { Outlet } from "react-router-dom";
-import videoUrl from "../assets/arona.mp4";
 import { useAudioPlayerContext } from "../context/audio-player-context";
+import Sidebar from "../Component/Sidebar";
+import StatusBar from "../Component/StatusBar";
 
-// background video loop
 const RootLayout = () => {
   const { audioRef, currentTrack, setDuration, onTrackEndRef } =
     useAudioPlayerContext();
 
   const onLoadedMetadata = () => {
     const seconds = audioRef.current?.duration;
-    if (seconds !== undefined) setDuration(seconds);
+    if (seconds !== undefined) {
+      setDuration(seconds);
+    }
   };
 
   const onEnded = () => {
     onTrackEndRef.current?.();
   };
 
-  const mediaStyle = {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-    pointerEvents: "none", // Disables user interaction
-    zIndex: -1,
-    opacity: 0.8,
-    filter: "blur(4px)",
-  };
-
   return (
-    <>
-      <CardMedia
-        component="video"
-        src={videoUrl}
-        autoPlay
-        muted
-        loop
-        sx={mediaStyle}
-      />
+    <div className="h-screen w-full relative overflow-hidden">
+      {/* Background Layer */}
+      <div className="fixed inset-0 z-0 overflow-hidden">
+        <img
+          alt="Background"
+          src="/background.png"
+          className="w-full h-full object-cover opacity-95 blur-md"
+        />
+        <div className="absolute inset-0 bg-white/10" />
+      </div>
+
+      {/* Persistent Audio Element */}
       <audio
         ref={audioRef}
         src={currentTrack.src}
         onLoadedMetadata={onLoadedMetadata}
         onEnded={onEnded}
       />
-      <Outlet></Outlet>
-    </>
+
+      {/* Sidebar */}
+      <Sidebar />
+
+      {/* Main Content Area */}
+      <main className="ml-48 p-8 h-screen flex flex-col relative z-10 max-w-[calc(100%-12rem)]">
+        <Outlet />
+      </main>
+
+      {/* Status Bar */}
+      <StatusBar />
+    </div>
   );
 };
 
