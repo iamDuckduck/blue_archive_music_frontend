@@ -1,9 +1,22 @@
 import { CardMedia } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import videoUrl from "../assets/arona.mp4";
+import { useAudioPlayerContext } from "../context/audio-player-context";
 
 // background video loop
-const rootLayout = () => {
+const RootLayout = () => {
+  const { audioRef, currentTrack, setDuration, onTrackEndRef } =
+    useAudioPlayerContext();
+
+  const onLoadedMetadata = () => {
+    const seconds = audioRef.current?.duration;
+    if (seconds !== undefined) setDuration(seconds);
+  };
+
+  const onEnded = () => {
+    onTrackEndRef.current?.();
+  };
+
   const mediaStyle = {
     position: "absolute",
     width: "100%",
@@ -25,9 +38,15 @@ const rootLayout = () => {
         loop
         sx={mediaStyle}
       />
+      <audio
+        ref={audioRef}
+        src={currentTrack.src}
+        onLoadedMetadata={onLoadedMetadata}
+        onEnded={onEnded}
+      />
       <Outlet></Outlet>
     </>
   );
 };
 
-export default rootLayout;
+export default RootLayout;

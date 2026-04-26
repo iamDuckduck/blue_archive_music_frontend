@@ -6,6 +6,7 @@ import {
   type Dispatch,
   type SetStateAction,
   type RefObject,
+  type MutableRefObject,
   useRef,
 } from "react";
 import type OstPage from "../entities/OstPage";
@@ -34,6 +35,7 @@ interface AudioPlayerContextType {
   setTrackIndex: Dispatch<SetStateAction<number>>;
   currentType: OstType;
   setCurrentType: Dispatch<SetStateAction<OstType>>;
+  onTrackEndRef: MutableRefObject<(() => void) | null>;
 }
 const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(
   undefined
@@ -47,6 +49,7 @@ export const AudioPlayerProvider = ({ children }: { children: ReactNode }) => {
   const [duration, setDuration] = useState<number>(0);
   const [currentType, setCurrentType] = useState<OstType>({} as OstType);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const onTrackEndRef = useRef<(() => void) | null>(null);
 
   const contextValue = {
     currentTrack,
@@ -64,6 +67,7 @@ export const AudioPlayerProvider = ({ children }: { children: ReactNode }) => {
     setTrackIndex,
     currentType,
     setCurrentType,
+    onTrackEndRef,
   };
   return (
     <AudioPlayerContext.Provider value={contextValue}>
