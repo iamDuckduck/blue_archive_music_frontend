@@ -53,8 +53,7 @@ const Home = () => {
 
   return (
     <>
-      {/* Welcome Header */}
-      <section className="mb-4">
+      <section className="absolute top-8 left-8 right-8 z-10">
         <div className="flex items-end justify-between border-b border-sky-400/20 pb-4">
           <div>
             <h2 className="text-5xl font-black mt-2 ba-bordered-text">
@@ -70,9 +69,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Centered Media Player */}
       <section className="flex-1 flex items-center justify-center">
-        <HomeMediaPlayer onNext={handleRandom} onPrevious={handleRandom} />
+          <HomeMediaPlayer onNext={handleRandom} onPrevious={handleRandom} />
       </section>
     </>
   );

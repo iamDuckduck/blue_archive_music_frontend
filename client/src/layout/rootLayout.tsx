@@ -45,7 +45,7 @@ const RootLayout = () => {
       <Sidebar />
 
       {/* Main Content Area */}
-      <main className="ml-48 p-8 h-screen flex flex-col relative z-10 max-w-[calc(100%-12rem)]">
+      <main className="ml-48 p-8 pb-12 h-screen flex flex-col relative z-10 max-w-[calc(100%-12rem)]">
         <Outlet />
       </main>
 
