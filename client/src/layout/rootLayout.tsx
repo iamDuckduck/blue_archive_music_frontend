@@ -2,10 +2,13 @@ import { Outlet } from "react-router-dom";
 import { useAudioPlayerContext } from "../context/audio-player-context";
 import Sidebar from "../Component/Sidebar";
 import StatusBar from "../Component/StatusBar";
+import useAudioEngine from "../hooks/useAudioEngine";
 
 const RootLayout = () => {
   const { audioRef, currentTrack, setDuration, onTrackEndRef } =
     useAudioPlayerContext();
+
+  useAudioEngine();
 
   const onLoadedMetadata = () => {
     const seconds = audioRef.current?.duration;
