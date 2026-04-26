@@ -46,6 +46,12 @@ class APIClient<T> {
       .get<T[]>(this.endpoint, config)
       .then((res) => res.data);
   };
+
+  getRandomSong = () => {
+    return axiosInstance
+      .get<T>(`${this.endpoint}`)
+      .then((res) => res.data);
+  }
 }
 
 export default APIClient;
