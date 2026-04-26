@@ -1,46 +1,54 @@
-import Box from "@mui/material/Box";
-import { Button, Fade, Stack, Typography } from "@mui/material";
-
-import { useNavigate } from "react-router-dom";
+// import { useEffect, useState } from "react";
+import HomeMediaPlayer from "../Component/HomeMediaPlayer";
+import useRandomSong from "../hooks/useRandomSong";
 
 const Home = () => {
-  const boxStyle = {
-    width: "100vw",
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
+  const { refetch } = useRandomSong();
+  const handleRandom = () => {
+    refetch();
   };
 
-  const navigate = useNavigate();
-  return (
-    <Box sx={boxStyle}>
-      <Fade in={true} timeout={3000}>
-        <Stack
-          sx={{
-            marginBottom: 10,
-            alignItems: "center",
-          }}
-        >
-          <Typography variant="h1">Blue Archive OST</Typography>
+  // const [time, setTime] = useState("");
 
-          <Button
-            variant="contained"
-            size="small"
-            sx={{
-              opacity: 0.9,
-              padding: 1.5,
-            }}
-            onClick={() => {
-              navigate("/main");
-            }}
-          >
-            Click here to play
-          </Button>
-        </Stack>
-      </Fade>
-    </Box>
+  // useEffect(() => {
+  //   const updateClock = () => {
+  //     const now = new Date();
+  //     // UTC+9 (JST)
+  //     const utc9 = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  //     const hh = String(utc9.getUTCHours()).padStart(2, "0");
+  //     const mm = String(utc9.getUTCMinutes()).padStart(2, "0");
+  //     const ss = String(utc9.getUTCSeconds()).padStart(2, "0");
+  //     setTime(`${hh}:${mm}:${ss}`);
+  //   };
+  //   updateClock();
+  //   const id = setInterval(updateClock, 1000);
+  //   return () => clearInterval(id);
+  // }, []);
+
+  return (
+    <>
+      {/* Welcome Header */}
+      <section className="mb-4">
+        <div className="flex items-end justify-between border-b border-sky-400/20 pb-4">
+          <div>
+            <h2 className="text-5xl font-black mt-2 ba-bordered-text">
+              Welcome Back, Sensei
+            </h2>
+          </div>
+          <div className="text-right">
+            {/* <div className="text-2xl font-light text-slate-800">{time}</div> */}
+            <div className="text-[10px] uppercase tracking-tighter text-sky-600 font-bold">
+              System Time / UTC+9
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Centered Media Player */}
+      <section className="flex-1 flex items-center justify-center">
+        <HomeMediaPlayer onNext={handleRandom} onPrevious={handleRandom} />
+      </section>
+    </>
   );
 };
 
