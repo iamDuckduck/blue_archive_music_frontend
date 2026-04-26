@@ -39,8 +39,8 @@ const Sidebar = () => {
         ))}
       </nav>
 
-      {/* User Info Footer */}
-      <div className="p-4 border-t border-white/20 mt-auto bg-white/20">
+      {/* User Info Footer — TODO: re-enable when login/profile feature is finalized */}
+      {/* <div className="p-4 border-t border-white/20 mt-auto bg-white/20">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full border border-sky-400/50 p-0.5">
             <div className="w-full h-full rounded-full bg-sky-400/20 flex items-center justify-center">
@@ -61,7 +61,7 @@ const Sidebar = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </aside>
   );
 };
