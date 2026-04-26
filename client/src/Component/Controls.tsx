@@ -17,26 +17,18 @@ import { buildTrackInfo } from "../utils/buildTrackInfo";
 const Controls = () => {
   const {
     audioRef,
-    currentTrack,
     duration,
     isPlaying,
     setIsPlaying,
-    setDuration,
     setTimeProgress,
     trackIndex,
     setTrackIndex,
     setCurrentTrack,
     trackList,
+    onTrackEndRef,
   } = useAudioPlayerContext();
   const [isShuffle, setIsShuffle] = useState<boolean>(false);
   const [isRepeat, setIsRepeat] = useState<boolean>(false);
-
-  const onLoadedMetadata = () => {
-    const seconds = audioRef.current?.duration;
-    if (seconds !== undefined) {
-      setDuration(seconds);
-    }
-  };
 
   const playAnimationRef = useRef<number | null>(null);
 
@@ -101,13 +93,21 @@ const Controls = () => {
     setCurrentTrack(currentTrackInfo);
   }, [isShuffle, trackIndex, trackList, setCurrentTrack, setTrackIndex]);
 
-  const handleOnEnded = () => {
+  const handleOnEnded = useCallback(() => {
     if (isRepeat) {
       audioRef.current?.play();
     } else {
-      handleNext(); // This function should handle both shuffle and non-shuffle scenarios
+      handleNext();
     }
-  };
+  }, [isRepeat, audioRef, handleNext]);
+
+  // Register onEnded handler in context so rootLayout's <audio> can call it
+  useEffect(() => {
+    onTrackEndRef.current = handleOnEnded;
+    return () => {
+      onTrackEndRef.current = null;
+    };
+  }, [handleOnEnded, onTrackEndRef]);
 
   // Effect to handle play/pause and start/stop animation
   useEffect(() => {
@@ -131,12 +131,6 @@ const Controls = () => {
 
   return (
     <Stack direction="row" spacing={1} alignItems="center">
-      <audio
-        src={currentTrack.src}
-        ref={audioRef}
-        onEnded={handleOnEnded}
-        onLoadedMetadata={onLoadedMetadata}
-      />
       <IconButton onClick={handlePrevious} size="small">
         <BsSkipStartFill size={20} />
       </IconButton>
