@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useAudioPlayerContext } from "../context/audio-player-context";
 import { buildTrackInfo } from "../utils/buildTrackInfo";
 import type OstPage from "../entities/OstPage";
@@ -40,39 +40,6 @@ const HomeMediaPlayer = ({ onNext, onPrevious }: HomeMediaPlayerProps = {}) => {
     }
   };
 
-  /* ─── Progress animation ─── */
-  const rafRef = useRef<number | null>(null);
-
-  const updateProgress = useCallback(() => {
-    if (audioRef.current) {
-      setTimeProgress(audioRef.current.currentTime);
-    }
-  }, [audioRef, setTimeProgress]);
-
-  const startAnimation = useCallback(() => {
-    const animate = () => {
-      updateProgress();
-      rafRef.current = requestAnimationFrame(animate);
-    };
-    rafRef.current = requestAnimationFrame(animate);
-  }, [updateProgress]);
-
-  useEffect(() => {
-    if (isPlaying) {
-      audioRef.current?.play();
-      startAnimation();
-    } else {
-      audioRef.current?.pause();
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
-    }
-    return () => {
-      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
-    };
-  }, [isPlaying, audioRef, startAnimation]);
-
   /* ─── Seek ─── */
   const progressBarRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -102,7 +69,7 @@ const HomeMediaPlayer = ({ onNext, onPrevious }: HomeMediaPlayerProps = {}) => {
   };
 
   /* ─── Next / Previous ─── */
-  const handleNext = useCallback(() => {
+  const handleNext = () => {
     if (onNext) {
       onNext();
       return;
@@ -113,9 +80,9 @@ const HomeMediaPlayer = ({ onNext, onPrevious }: HomeMediaPlayerProps = {}) => {
     const next = trackList[newIndex];
     setTrackIndex(newIndex);
     setCurrentTrack(buildTrackInfo(next as OstPage));
-  }, [onNext, trackIndex, trackList, setTrackIndex, setCurrentTrack]);
+  };
 
-  const handlePrevious = useCallback(() => {
+  const handlePrevious = () => {
     if (onPrevious) {
       onPrevious();
       return;
@@ -126,7 +93,7 @@ const HomeMediaPlayer = ({ onNext, onPrevious }: HomeMediaPlayerProps = {}) => {
     const prev = trackList[newIndex];
     setTrackIndex(newIndex);
     setCurrentTrack(buildTrackInfo(prev as OstPage));
-  }, [onPrevious, trackIndex, trackList, setTrackIndex, setCurrentTrack]);
+  };
 
   const progressPercent = duration > 0 ? (timeProgress / duration) * 100 : 0;
 

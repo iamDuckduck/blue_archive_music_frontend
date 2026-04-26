@@ -10,14 +10,13 @@ import {
   BsShuffle,
   BsRepeat,
 } from "react-icons/bs";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type OstPage from "../entities/OstPage";
 import { buildTrackInfo } from "../utils/buildTrackInfo";
 
 const Controls = () => {
   const {
     audioRef,
-    duration,
     isPlaying,
     setIsPlaying,
     setTimeProgress,
@@ -30,37 +29,17 @@ const Controls = () => {
   const [isShuffle, setIsShuffle] = useState<boolean>(false);
   const [isRepeat, setIsRepeat] = useState<boolean>(false);
 
-  const playAnimationRef = useRef<number | null>(null);
-
-  const updateProgress = useCallback(() => {
-    if (audioRef.current && duration) {
-      const currentTime = audioRef.current.currentTime;
-      setTimeProgress(currentTime);
-    }
-  }, [audioRef, duration, setTimeProgress]);
-
-  // Start animation loop with RAF
-  const startAnimation = useCallback(() => {
-    if (audioRef.current && duration) {
-      const animate = () => {
-        updateProgress();
-        playAnimationRef.current = requestAnimationFrame(animate);
-      };
-      playAnimationRef.current = requestAnimationFrame(animate);
-    }
-  }, [updateProgress, duration, audioRef]);
-
   const skipForward = () => {
     if (audioRef.current) {
       audioRef.current.currentTime += 15;
-      updateProgress();
+      setTimeProgress(audioRef.current.currentTime);
     }
   };
 
   const skipBackward = () => {
     if (audioRef.current) {
       audioRef.current.currentTime -= 15;
-      updateProgress();
+      setTimeProgress(audioRef.current.currentTime);
     }
   };
 
@@ -101,33 +80,13 @@ const Controls = () => {
     }
   }, [isRepeat, audioRef, handleNext]);
 
-  // Register onEnded handler in context so rootLayout's <audio> can call it
+  // Register onEnded handler in context so RootLayout's <audio> can call it
   useEffect(() => {
     onTrackEndRef.current = handleOnEnded;
     return () => {
       onTrackEndRef.current = null;
     };
   }, [handleOnEnded, onTrackEndRef]);
-
-  // Effect to handle play/pause and start/stop animation
-  useEffect(() => {
-    if (isPlaying) {
-      audioRef.current?.play();
-      startAnimation();
-    } else {
-      audioRef.current?.pause();
-      if (playAnimationRef.current !== null) {
-        cancelAnimationFrame(playAnimationRef.current);
-        playAnimationRef.current = null;
-      }
-      updateProgress(); // Ensure progress is updated immediately when paused
-    }
-    return () => {
-      if (playAnimationRef.current !== null) {
-        cancelAnimationFrame(playAnimationRef.current);
-      }
-    };
-  }, [isPlaying, audioRef, startAnimation, updateProgress]);
 
   return (
     <Stack direction="row" spacing={1} alignItems="center">
