@@ -44,8 +44,7 @@ const useAudioEngine = () => {
         rafRef.current = null;
       }
     };
-    // currentTrack.src is included so the engine re-runs on track change:
-    // cleanup cancels the old RAF, the new run calls play() on the new <audio src>.
+
   }, [isPlaying, audioRef, setTimeProgress, setIsPlaying, currentTrack?.src]);
 };
 
