@@ -20,6 +20,23 @@ const BottomMediaBar = () => {
   const setTimeProgress = useAudioPlayerStore((s) => s.setTimeProgress);
   const volume = useAudioPlayerStore((s) => s.volume);
   const setVolume = useAudioPlayerStore((s) => s.setVolume);
+  const queue = useAudioPlayerStore((s) => s.queue);
+  const queueIndex = useAudioPlayerStore((s) => s.queueIndex);
+  const setQueueIndex = useAudioPlayerStore((s) => s.setQueueIndex);
+  const setCurrentTrack = useAudioPlayerStore((s) => s.setCurrentTrack);
+
+  const hasQueue = queue.length > 0;
+
+  const goTo = (index: number) => {
+    if (!hasQueue) return;
+    const wrapped = (index + queue.length) % queue.length;
+    setQueueIndex(wrapped);
+    setCurrentTrack(queue[wrapped]);
+    setIsPlaying(true);
+  };
+
+  const handlePrev = () => goTo(queueIndex - 1);
+  const handleNext = () => goTo(queueIndex + 1);
 
   const volumeLevel = Math.round(volume * VOLUME_STEPS);
 
@@ -99,7 +116,8 @@ const BottomMediaBar = () => {
       <div className="flex flex-col items-center gap-2 px-12 border-x border-white/20 flex-1 max-w-2xl">
         <div className="flex items-center gap-6">
           <button
-            disabled={!hasTrack}
+            disabled={!hasQueue}
+            onClick={handlePrev}
             className="text-slate-600 hover:text-sky-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             aria-label="Previous"
           >
@@ -121,7 +139,8 @@ const BottomMediaBar = () => {
             </span>
           </button>
           <button
-            disabled={!hasTrack}
+            disabled={!hasQueue}
+            onClick={handleNext}
             className="text-slate-600 hover:text-sky-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             aria-label="Next"
           >
