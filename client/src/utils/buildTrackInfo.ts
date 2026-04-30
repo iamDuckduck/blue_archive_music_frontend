@@ -1,5 +1,5 @@
 import { PUBLIC_URL_PREFIX } from "../constants/api";
-import type { Track } from "../context/audio-player-context";
+import type { Track } from "../store/audioPlayerStore";
 import type OstPage from "../entities/OstPage";
 
 export const buildTrackInfo = (targetTrack: OstPage): Track => {

@@ -15,7 +15,7 @@ import {
 import { useEffect, useState } from "react";
 import useOstType from "../hooks/useOstType";
 import { PUBLIC_URL_PREFIX } from "../constants/api";
-import { useAudioPlayerContext } from "../context/audio-player-context";
+import { useAudioPlayerStore } from "../store/audioPlayerStore";
 import MenuIcon from "@mui/icons-material/Menu";
 
 const LeftSidePanel = () => {
@@ -37,7 +37,7 @@ const LeftSidePanel = () => {
     </Box>
   );
 
-  const { setCurrentType } = useAudioPlayerContext();
+  const setCurrentType = useAudioPlayerStore((s) => s.setCurrentType);
 
   // ostTypeInfo
   const { data } = useOstType();

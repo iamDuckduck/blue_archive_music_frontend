@@ -3,20 +3,18 @@ import { useQuery } from "@tanstack/react-query";
 import APIClient from "../service/api-client";
 import type Song from "../entities/Song";
 import type OstType from "../entities/OstType";
-import { useAudioPlayerContext } from "../context/audio-player-context";
+import { useAudioPlayerStore } from "../store/audioPlayerStore";
 import { PUBLIC_URL_PREFIX } from "../constants/api";
 
 const SONG_RANDOM_ENDPOINT = "/user/song/random";
 const apiClient = new APIClient<Song>(SONG_RANDOM_ENDPOINT);
 
 const useRandomSong = () => {
-  const {
-    setCurrentTrack,
-    setCurrentType,
-    setTrackList,
-    setTrackIndex,
-    setIsPlaying,
-  } = useAudioPlayerContext();
+  const setCurrentTrack = useAudioPlayerStore((s) => s.setCurrentTrack);
+  const setCurrentType = useAudioPlayerStore((s) => s.setCurrentType);
+  const setTrackList = useAudioPlayerStore((s) => s.setTrackList);
+  const setTrackIndex = useAudioPlayerStore((s) => s.setTrackIndex);
+  const setIsPlaying = useAudioPlayerStore((s) => s.setIsPlaying);
 
   const { data, refetch, isFetching } = useQuery({
     queryKey: ["random-song"],

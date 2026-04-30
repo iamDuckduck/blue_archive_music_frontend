@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import { useAudioPlayerContext } from "../context/audio-player-context";
+import { useAudioPlayerStore } from "../store/audioPlayerStore";
+import { audioRef } from "../audio/audioEngine";
 
 /**
  * Single source of truth for audio playback side-effects.
@@ -7,15 +8,17 @@ import { useAudioPlayerContext } from "../context/audio-player-context";
  *
  *  - Reacts to `isPlaying` to play/pause the <audio> element.
  *  - Drives a requestAnimationFrame loop that mirrors
- *    audio.currentTime into the `timeProgress` context state.
+ *    audio.currentTime into the `timeProgress` store state.
  *
  * UI components (Controls, HomeMediaPlayer, etc.) are pure consumers:
  * they read state and dispatch via setIsPlaying / seek, but never
  * touch RAF or play()/pause() directly.
  */
 const useAudioEngine = () => {
-  const { audioRef, isPlaying, setIsPlaying, setTimeProgress, currentTrack } =
-    useAudioPlayerContext();
+  const isPlaying = useAudioPlayerStore((s) => s.isPlaying);
+  const setIsPlaying = useAudioPlayerStore((s) => s.setIsPlaying);
+  const setTimeProgress = useAudioPlayerStore((s) => s.setTimeProgress);
+  const currentTrackSrc = useAudioPlayerStore((s) => s.currentTrack?.src);
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -44,8 +47,7 @@ const useAudioEngine = () => {
         rafRef.current = null;
       }
     };
-
-  }, [isPlaying, audioRef, setTimeProgress, setIsPlaying, currentTrack?.src]);
+  }, [isPlaying, setTimeProgress, setIsPlaying, currentTrackSrc]);
 };
 
 export default useAudioEngine;

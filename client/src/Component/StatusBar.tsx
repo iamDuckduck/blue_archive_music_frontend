@@ -1,7 +1,8 @@
-import { useAudioPlayerContext } from "../context/audio-player-context";
+import { useAudioPlayerStore } from "../store/audioPlayerStore";
 
 const StatusBar = () => {
-  const { currentType, currentTrack } = useAudioPlayerContext();
+  const currentTrack = useAudioPlayerStore((s) => s.currentTrack);
+  const currentType = useAudioPlayerStore((s) => s.currentType);
 
   const nowPlaying =
     currentTrack?.name || currentType?.name || "Standby";

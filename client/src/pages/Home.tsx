@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import HomeMediaPlayer from "../Component/HomeMediaPlayer";
 import useRandomSong from "../hooks/useRandomSong";
-import { useAudioPlayerContext } from "../context/audio-player-context";
+import { onTrackEndRef } from "../audio/audioEngine";
 
 const Home = () => {
   const { refetch } = useRandomSong();
-  const { onTrackEndRef } = useAudioPlayerContext();
 
   const handleRandom = () => {
     refetch();
@@ -22,7 +21,7 @@ const Home = () => {
     return () => {
       onTrackEndRef.current = null;
     };
-  }, [refetch, onTrackEndRef]);
+  }, [refetch]);
 
   const [time, setTime] = useState("");
 

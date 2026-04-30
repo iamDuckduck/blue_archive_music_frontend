@@ -1,5 +1,6 @@
 import { IconButton, Stack } from "@mui/material";
-import { useAudioPlayerContext } from "../context/audio-player-context";
+import { useAudioPlayerStore } from "../store/audioPlayerStore";
+import { audioRef, onTrackEndRef } from "../audio/audioEngine";
 import {
   BsSkipStartFill,
   BsFillRewindFill,
@@ -15,17 +16,13 @@ import type OstPage from "../entities/OstPage";
 import { buildTrackInfo } from "../utils/buildTrackInfo";
 
 const Controls = () => {
-  const {
-    audioRef,
-    isPlaying,
-    setIsPlaying,
-    setTimeProgress,
-    trackIndex,
-    setTrackIndex,
-    setCurrentTrack,
-    trackList,
-    onTrackEndRef,
-  } = useAudioPlayerContext();
+  const isPlaying = useAudioPlayerStore((s) => s.isPlaying);
+  const setIsPlaying = useAudioPlayerStore((s) => s.setIsPlaying);
+  const setTimeProgress = useAudioPlayerStore((s) => s.setTimeProgress);
+  const trackIndex = useAudioPlayerStore((s) => s.trackIndex);
+  const setTrackIndex = useAudioPlayerStore((s) => s.setTrackIndex);
+  const setCurrentTrack = useAudioPlayerStore((s) => s.setCurrentTrack);
+  const trackList = useAudioPlayerStore((s) => s.trackList);
   const [isShuffle, setIsShuffle] = useState<boolean>(false);
   const [isRepeat, setIsRepeat] = useState<boolean>(false);
 

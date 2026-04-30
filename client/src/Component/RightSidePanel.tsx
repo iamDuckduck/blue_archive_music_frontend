@@ -1,11 +1,11 @@
 import { Box, Stack, Typography } from "@mui/material";
-import { useAudioPlayerContext } from "../context/audio-player-context";
+import { useAudioPlayerStore } from "../store/audioPlayerStore";
 import { PUBLIC_URL_PREFIX } from "../constants/api";
 import useOstVolume from "../hooks/useOstVol";
 import { AudioPlayerForMain } from "./AudioPlayerForMain";
 
 const RightSidePanel = () => {
-  const { currentType } = useAudioPlayerContext();
+  const currentType = useAudioPlayerStore((s) => s.currentType);
   const { data } = useOstVolume(currentType.volume);
 
   return (

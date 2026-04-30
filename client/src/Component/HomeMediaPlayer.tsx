@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import { useAudioPlayerContext } from "../context/audio-player-context";
+import { useAudioPlayerStore } from "../store/audioPlayerStore";
+import { audioRef } from "../audio/audioEngine";
 import { buildTrackInfo } from "../utils/buildTrackInfo";
 import type OstPage from "../entities/OstPage";
 
@@ -15,20 +16,17 @@ interface HomeMediaPlayerProps {
 }
 
 const HomeMediaPlayer = ({ onNext, onPrevious }: HomeMediaPlayerProps = {}) => {
-  const {
-    audioRef,
-    currentTrack,
-    currentType,
-    isPlaying,
-    setIsPlaying,
-    duration,
-    setTimeProgress,
-    timeProgress,
-    trackIndex,
-    setTrackIndex,
-    setCurrentTrack,
-    trackList,
-  } = useAudioPlayerContext();
+  const currentTrack = useAudioPlayerStore((s) => s.currentTrack);
+  const currentType = useAudioPlayerStore((s) => s.currentType);
+  const isPlaying = useAudioPlayerStore((s) => s.isPlaying);
+  const setIsPlaying = useAudioPlayerStore((s) => s.setIsPlaying);
+  const duration = useAudioPlayerStore((s) => s.duration);
+  const timeProgress = useAudioPlayerStore((s) => s.timeProgress);
+  const setTimeProgress = useAudioPlayerStore((s) => s.setTimeProgress);
+  const trackIndex = useAudioPlayerStore((s) => s.trackIndex);
+  const setTrackIndex = useAudioPlayerStore((s) => s.setTrackIndex);
+  const setCurrentTrack = useAudioPlayerStore((s) => s.setCurrentTrack);
+  const trackList = useAudioPlayerStore((s) => s.trackList);
 
   /* ─── Volume (segmented 5-bar) ─── */
   const [volume, setVolume] = useState(3); // 0-5

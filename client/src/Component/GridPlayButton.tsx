@@ -2,7 +2,8 @@ import { IconButton } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
 import type { GridRowId } from "@mui/x-data-grid";
-import { useAudioPlayerContext } from "../context/audio-player-context";
+import { useAudioPlayerStore } from "../store/audioPlayerStore";
+import { audioRef } from "../audio/audioEngine";
 import { buildTrackInfo } from "../utils/buildTrackInfo";
 import type OstPage from "../entities/OstPage";
 import APIClient from "../service/api-client";
@@ -12,14 +13,11 @@ interface PlayButtonProps {
 }
 
 export const GridPlayButton = ({ rowId }: PlayButtonProps) => {
-  const {
-    audioRef,
-    currentTrack,
-    setCurrentTrack,
-    trackList,
-    setIsPlaying,
-    isPlaying,
-  } = useAudioPlayerContext();
+  const currentTrack = useAudioPlayerStore((s) => s.currentTrack);
+  const setCurrentTrack = useAudioPlayerStore((s) => s.setCurrentTrack);
+  const trackList = useAudioPlayerStore((s) => s.trackList);
+  const setIsPlaying = useAudioPlayerStore((s) => s.setIsPlaying);
+  const isPlaying = useAudioPlayerStore((s) => s.isPlaying);
 
   const apiClient = new APIClient<OstPage>("/user/ost/audio");
 
