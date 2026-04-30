@@ -74,6 +74,11 @@ html {
   clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%);
 }
 
+/* ── Tactical card clip-path (slightly larger corner cut) ── */
+.tactical-card {
+  clip-path: polygon(0 0, 100% 0, 100% 90%, 90% 100%, 0 100%);
+}
+
 /* ── Diamond progress handle ── */
 .diamond-handle {
   width: 10px;
@@ -90,8 +95,13 @@ html {
 }
 
 /* ── Custom scrollbar ── */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 191, 255, 0.2) transparent;
+}
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
+  height: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
@@ -99,4 +109,33 @@ html {
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(0, 191, 255, 0.2);
   border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 191, 255, 0.5);
+}
+
+/* ── Hidden scrollbar (still scrollable) ── */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Right-edge fade mask for horizontal scrollers ──
+   Hints that more content is hidden to the right. */
+.edge-fade-right {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    black 0,
+    black calc(100% - 64px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    black 0,
+    black calc(100% - 64px),
+    transparent 100%
+  );
 }
