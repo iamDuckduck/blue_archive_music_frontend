@@ -1,10 +1,12 @@
-export default interface Album {
-  id?: number;
+import type Song from "./Song";
+
+export default interface AlbumDetails {
+  id: number;
   title: string;
   coverImagePath: string;
   releaseDate: string;
   description: string;
-  category: string;
+  songList: Song[];
   createdDate: string;
   updatedDate: string;
 }

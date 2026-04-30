@@ -17,6 +17,13 @@ interface AudioPlayerState {
   currentType: OstType;
   trackList: OstPage[];
   trackIndex: number;
+  /**
+   * Generic Track[] queue used by the new song-page-driven flows.
+   * The legacy `trackList` is OstPage-shaped and tied to the
+   * /OST DataGrid; once that page is removed the two will collapse.
+   */
+  queue: Track[];
+  queueIndex: number;
   isPlaying: boolean;
   timeProgress: number;
   duration: number;
@@ -27,6 +34,8 @@ interface AudioPlayerState {
   setCurrentType: (t: OstType) => void;
   setTrackList: (l: OstPage[]) => void;
   setTrackIndex: (i: number) => void;
+  setQueue: (q: Track[]) => void;
+  setQueueIndex: (i: number) => void;
   setIsPlaying: Dispatch<SetStateAction<boolean>>;
   setTimeProgress: (n: number) => void;
   setDuration: (n: number) => void;
@@ -49,6 +58,8 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
       currentType: {} as OstType,
       trackList: [] as OstPage[],
       trackIndex: 0,
+      queue: [] as Track[],
+      queueIndex: 0,
       isPlaying: false,
       timeProgress: 0,
       duration: 0,
@@ -59,6 +70,8 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
       setCurrentType: (t) => set({ currentType: t }),
       setTrackList: (l) => set({ trackList: l }),
       setTrackIndex: (i) => set({ trackIndex: i }),
+      setQueue: (q) => set({ queue: q }),
+      setQueueIndex: (i) => set({ queueIndex: i }),
       // Mirrors React's useState setter: accepts either a new value or an
       // updater function, so existing call sites like `setIsPlaying(p => !p)`
       // keep working unchanged.
