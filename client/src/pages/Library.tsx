@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@mui/material";
 import useCategories from "../hooks/useCategories";
 import PageHeader from "../Component/PageHeader";
@@ -41,6 +42,7 @@ const SkeletonRow = () => (
 
 const Library = () => {
   const { data: categories, isLoading, isError } = useCategories();
+  const navigate = useNavigate();
 
   return (
     <div className="flex flex-col h-full">
@@ -77,6 +79,11 @@ const Library = () => {
                     imageUrl={
                       album.coverImagePath
                         ? `${PUBLIC_URL_PREFIX}${album.coverImagePath}`
+                        : undefined
+                    }
+                    onClick={
+                      album.id != null
+                        ? () => navigate(`/library/albums/${album.id}`)
                         : undefined
                     }
                   />
