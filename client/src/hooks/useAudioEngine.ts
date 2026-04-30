@@ -19,7 +19,16 @@ const useAudioEngine = () => {
   const setIsPlaying = useAudioPlayerStore((s) => s.setIsPlaying);
   const setTimeProgress = useAudioPlayerStore((s) => s.setTimeProgress);
   const currentTrackSrc = useAudioPlayerStore((s) => s.currentTrack?.src);
+  const volume = useAudioPlayerStore((s) => s.volume);
+  const muted = useAudioPlayerStore((s) => s.muted);
   const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+      audioRef.current.muted = muted;
+    }
+  }, [volume, muted, currentTrackSrc]);
 
   useEffect(() => {
     const tick = () => {
