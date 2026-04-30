@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { Skeleton } from "@mui/material";
 import { useAudioPlayerStore } from "../store/audioPlayerStore";
 import { audioRef } from "../audio/audioEngine";
 import { buildTrackInfo } from "../utils/buildTrackInfo";
@@ -15,9 +16,14 @@ const formatTime = (secs: number): string => {
 interface HomeMediaPlayerProps {
   onNext?: () => void;
   onPrevious?: () => void;
+  isLoading?: boolean;
 }
 
-const HomeMediaPlayer = ({ onNext, onPrevious }: HomeMediaPlayerProps = {}) => {
+const HomeMediaPlayer = ({
+  onNext,
+  onPrevious,
+  isLoading = false,
+}: HomeMediaPlayerProps = {}) => {
   const currentTrack = useAudioPlayerStore((s) => s.currentTrack);
   const currentType = useAudioPlayerStore((s) => s.currentType);
   const isPlaying = useAudioPlayerStore((s) => s.isPlaying);
@@ -104,7 +110,15 @@ const HomeMediaPlayer = ({ onNext, onPrevious }: HomeMediaPlayerProps = {}) => {
       <div className="relative group shrink-0">
         <div className="absolute -inset-1 bg-sky-400/20 rounded-lg blur-sm" />
         <div className="relative w-64 h-64 rounded-lg overflow-hidden border-2 border-white/40 tactical-album-small shadow-lg">
-          {currentTrack?.thumbnail ? (
+          {isLoading ? (
+            <Skeleton
+              variant="rectangular"
+              width="100%"
+              height="100%"
+              animation="wave"
+              sx={{ bgcolor: "rgba(56, 189, 248, 0.15)" }}
+            />
+          ) : currentTrack?.thumbnail ? (
             <img
               alt="Album Art"
               src={currentTrack.thumbnail}
@@ -130,15 +144,28 @@ const HomeMediaPlayer = ({ onNext, onPrevious }: HomeMediaPlayerProps = {}) => {
                 Current Album
               </span>
               <span className="text-sky-600 font-bold text-[10px] uppercase tracking-widest">
-                {currentType?.name || ""}
+                {isLoading ? (
+                  <Skeleton variant="text" width={120} sx={{ display: "inline-block" }} />
+                ) : (
+                  currentType?.name || ""
+                )}
               </span>
             </div>
-            <h3 className="text-4xl font-black uppercase tracking-tight ba-bordered-text">
-              {currentTrack?.name || "—"}
-            </h3>
-            <p className="text-sky-600 font-bold text-sm uppercase tracking-widest mt-1">
-              {currentTrack?.author || ""}
-            </p>
+            {isLoading ? (
+              <>
+                <Skeleton variant="text" width={320} height={48} />
+                <Skeleton variant="text" width={180} height={20} sx={{ mt: 0.5 }} />
+              </>
+            ) : (
+              <>
+                <h3 className="text-4xl font-black uppercase tracking-tight ba-bordered-text">
+                  {currentTrack?.name || "—"}
+                </h3>
+                <p className="text-sky-600 font-bold text-sm uppercase tracking-widest mt-1">
+                  {currentTrack?.author || ""}
+                </p>
+              </>
+            )}
           </div>
 
           {/* Volume */}
