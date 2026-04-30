@@ -29,8 +29,15 @@ interface AudioPlayerState {
   setDuration: (n: number) => void;
 }
 
+const emptyTrack: Track = {
+  id: 0,
+  name: "",
+  src: "",
+  author: "",
+};
+
 export const useAudioPlayerStore = create<AudioPlayerState>()((set) => ({
-  currentTrack: {} as Track,
+  currentTrack: emptyTrack,
   currentType: {} as OstType,
   trackList: [] as OstPage[],
   trackIndex: 0,
