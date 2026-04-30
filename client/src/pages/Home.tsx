@@ -4,7 +4,7 @@ import useRandomSong from "../hooks/useRandomSong";
 import { onTrackEndRef } from "../audio/audioEngine";
 
 const Home = () => {
-  const { refetch } = useRandomSong();
+  const { refetch, isFetching } = useRandomSong();
 
   const handleRandom = () => {
     refetch();
@@ -69,7 +69,11 @@ const Home = () => {
       </section>
 
       <section className="flex-1 flex items-center justify-center">
-          <HomeMediaPlayer onNext={handleRandom} onPrevious={handleRandom} />
+          <HomeMediaPlayer
+            onNext={handleRandom}
+            onPrevious={handleRandom}
+            isLoading={isFetching}
+          />
       </section>
     </>
   );
