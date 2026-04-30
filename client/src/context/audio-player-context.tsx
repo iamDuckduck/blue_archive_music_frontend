@@ -1,87 +1,35 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  type ReactNode,
-  type Dispatch,
-  type SetStateAction,
-  type RefObject,
-  type MutableRefObject,
-  useRef,
-} from "react";
-import type OstPage from "../entities/OstPage";
-import type OstType from "../entities/OstType";
+/**
+ * Back-compat shim during the Zustand migration.
+ *
+ * The real state now lives in `src/store/audioPlayerStore.ts`; DOM refs
+ * live in `src/audio/audioEngine.ts`. This file keeps the old
+ * `useAudioPlayerContext` / `AudioPlayerProvider` API alive so consumers
+ * don't all need to change in the same commit.
+ *
+ * - `AudioPlayerProvider` is now a no-op pass-through.
+ * - `useAudioPlayerContext` returns the same shape as before, powered by
+ *   the store (whole-state subscription — same re-render behavior as the
+ *   old context).
+ *
+ * Both will be deleted in commit 3 once consumers migrate to per-field
+ * selectors.
+ */
 
-export interface Track {
-  id: number;
-  name: string;
-  src: string;
-  author: string;
-  thumbnail?: string;
-}
-interface AudioPlayerContextType {
-  currentTrack: Track;
-  setCurrentTrack: Dispatch<SetStateAction<Track>>;
-  trackList: OstPage[];
-  setTrackList: Dispatch<SetStateAction<OstPage[]>>;
-  audioRef: RefObject<HTMLAudioElement | null>;
-  isPlaying: boolean;
-  setIsPlaying: Dispatch<SetStateAction<boolean>>;
-  timeProgress: number;
-  setTimeProgress: Dispatch<SetStateAction<number>>;
-  duration: number;
-  setDuration: Dispatch<SetStateAction<number>>;
-  trackIndex: number;
-  setTrackIndex: Dispatch<SetStateAction<number>>;
-  currentType: OstType;
-  setCurrentType: Dispatch<SetStateAction<OstType>>;
-  onTrackEndRef: MutableRefObject<(() => void) | null>;
-}
-const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(
-  undefined
-);
+import type { ReactNode, RefObject, MutableRefObject } from "react";
+import { useAudioPlayerStore, type Track } from "../store/audioPlayerStore";
+import { audioRef, onTrackEndRef } from "../audio/audioEngine";
+
+export type { Track };
+
 export const AudioPlayerProvider = ({ children }: { children: ReactNode }) => {
-  const [currentTrack, setCurrentTrack] = useState<Track>({} as Track);
-  const [trackList, setTrackList] = useState<OstPage[]>({} as OstPage[]);
-  const [trackIndex, setTrackIndex] = useState<number>(0);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [timeProgress, setTimeProgress] = useState<number>(0);
-  const [duration, setDuration] = useState<number>(0);
-  const [currentType, setCurrentType] = useState<OstType>({} as OstType);
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const onTrackEndRef = useRef<(() => void) | null>(null);
-
-  const contextValue = {
-    currentTrack,
-    setCurrentTrack,
-    trackList,
-    setTrackList,
-    audioRef,
-    isPlaying,
-    setIsPlaying,
-    timeProgress,
-    setTimeProgress,
-    duration,
-    setDuration,
-    trackIndex,
-    setTrackIndex,
-    currentType,
-    setCurrentType,
-    onTrackEndRef,
-  };
-  return (
-    <AudioPlayerContext.Provider value={contextValue}>
-      {children}
-    </AudioPlayerContext.Provider>
-  );
+  return <>{children}</>;
 };
 
-export const useAudioPlayerContext = (): AudioPlayerContextType => {
-  const context = useContext(AudioPlayerContext);
-  if (context === undefined) {
-    throw new Error(
-      "useAudioPlayerContext must be used within an AudioPlayerProvider"
-    );
-  }
-  return context;
+export const useAudioPlayerContext = () => {
+  const state = useAudioPlayerStore();
+  return {
+    ...state,
+    audioRef: audioRef as RefObject<HTMLAudioElement | null>,
+    onTrackEndRef: onTrackEndRef as MutableRefObject<(() => void) | null>,
+  };
 };
