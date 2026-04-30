@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 
 const navItems = [
   { to: "/", icon: "home", label: "Home" },
-  { to: "/OST", icon: "library_music", label: "Library" },
+  { to: "/library", icon: "library_music", label: "Library" },
 ];
 
 const Sidebar = () => {

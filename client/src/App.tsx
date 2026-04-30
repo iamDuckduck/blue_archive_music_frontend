@@ -7,6 +7,7 @@ import {
 import Home from "./pages/Home";
 import RootLayout from "./layout/rootLayout";
 import OstGrid from "./pages/OstGrid";
+import Library from "./pages/Library";
 import Main from "./pages/Main";
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route index element={<Home />}></Route>
           <Route path="main" element={<Main></Main>}></Route>
           <Route path="OST" element={<OstGrid></OstGrid>}></Route>
+          <Route path="library" element={<Library />}></Route>
         </Route>
       </>
     )
