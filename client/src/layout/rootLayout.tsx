@@ -1,13 +1,14 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useAudioPlayerStore } from "../store/audioPlayerStore";
 import { audioRef, onTrackEndRef } from "../audio/audioEngine";
 import Sidebar from "../Component/Sidebar";
-import StatusBar from "../Component/StatusBar";
+import BottomMediaBar from "../Component/BottomMediaBar";
 import useAudioEngine from "../hooks/useAudioEngine";
 
 const RootLayout = () => {
   const currentTrack = useAudioPlayerStore((s) => s.currentTrack);
   const setDuration = useAudioPlayerStore((s) => s.setDuration);
+  const location = useLocation();
 
   useAudioEngine();
 
@@ -21,6 +22,10 @@ const RootLayout = () => {
   const onEnded = () => {
     onTrackEndRef.current?.();
   };
+
+  // Home renders its own centered HomeMediaPlayer as the primary UI;
+  // every other route gets the fixed compact BottomMediaBar instead.
+  const isHome = location.pathname === "/";
 
   return (
     <div className="h-screen w-full relative overflow-hidden">
@@ -46,12 +51,16 @@ const RootLayout = () => {
       <Sidebar />
 
       {/* Main Content Area */}
-      <main className="ml-48 p-8 pb-12 h-screen flex flex-col relative z-10 max-w-[calc(100%-12rem)]">
+      <main
+        className={`ml-48 p-8 h-screen flex flex-col relative z-10 max-w-[calc(100%-12rem)] ${
+          isHome ? "pb-12" : "pb-32"
+        }`}
+      >
         <Outlet />
       </main>
 
-      {/* Status Bar */}
-      <StatusBar />
+      {/* Bottom Media Bar (hidden on Home) */}
+      {!isHome && <BottomMediaBar />}
     </div>
   );
 };
