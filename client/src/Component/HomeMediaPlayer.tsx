@@ -4,6 +4,8 @@ import { audioRef } from "../audio/audioEngine";
 import { buildTrackInfo } from "../utils/buildTrackInfo";
 import type OstPage from "../entities/OstPage";
 
+const VOLUME_STEPS = 8;
+
 const formatTime = (secs: number): string => {
   const m = Math.floor(secs / 60);
   const s = Math.floor(secs % 60);
@@ -27,15 +29,16 @@ const HomeMediaPlayer = ({ onNext, onPrevious }: HomeMediaPlayerProps = {}) => {
   const setTrackIndex = useAudioPlayerStore((s) => s.setTrackIndex);
   const setCurrentTrack = useAudioPlayerStore((s) => s.setCurrentTrack);
   const trackList = useAudioPlayerStore((s) => s.trackList);
+  const volume = useAudioPlayerStore((s) => s.volume);
+  const setVolume = useAudioPlayerStore((s) => s.setVolume);
 
-  /* ─── Volume (segmented 5-bar) ─── */
-  const [volume, setVolume] = useState(3); // 0-5
+  /* ─── Volume (segmented bars) ─── */
+  const volumeLevel = Math.round(volume * VOLUME_STEPS);
 
   const handleVolumeClick = (level: number) => {
-    setVolume(level);
-    if (audioRef.current) {
-      audioRef.current.volume = level / 5;
-    }
+    // Clicking the currently-active top bar mutes (sets to 0).
+    const next = level === volumeLevel ? 0 : level;
+    setVolume(next / VOLUME_STEPS);
   };
 
   /* ─── Seek ─── */
@@ -141,15 +144,19 @@ const HomeMediaPlayer = ({ onNext, onPrevious }: HomeMediaPlayerProps = {}) => {
           {/* Volume */}
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-lg text-slate-600">
-              {volume === 0 ? "volume_off" : volume <= 2 ? "volume_down" : "volume_up"}
+              {volumeLevel === 0
+                ? "volume_off"
+                : volumeLevel <= 3
+                ? "volume_down"
+                : "volume_up"}
             </span>
-            <div className="w-20 h-2 flex items-center gap-0.5">
-              {[1, 2, 3, 4, 5].map((level) => (
+            <div className="w-24 h-2 flex items-center gap-0.5">
+              {Array.from({ length: VOLUME_STEPS }, (_, i) => i + 1).map((level) => (
                 <button
                   key={level}
-                  onClick={() => handleVolumeClick(level === volume ? 0 : level)}
+                  onClick={() => handleVolumeClick(level)}
                   className={`h-full flex-1 cursor-pointer transition-colors ${
-                    level <= volume ? "bg-sky-400" : "bg-sky-400/20"
+                    level <= volumeLevel ? "bg-sky-400" : "bg-sky-400/20"
                   }`}
                 />
               ))}
