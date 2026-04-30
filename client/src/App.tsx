@@ -9,6 +9,7 @@ import RootLayout from "./layout/rootLayout";
 import OstGrid from "./pages/OstGrid";
 import Library from "./pages/Library";
 import Main from "./pages/Main";
+import SongPage from "./pages/SongPage";
 
 function App() {
   const router = createBrowserRouter(
@@ -19,6 +20,7 @@ function App() {
           <Route path="main" element={<Main></Main>}></Route>
           <Route path="OST" element={<OstGrid></OstGrid>}></Route>
           <Route path="library" element={<Library />}></Route>
+          <Route path="library/albums/:albumId" element={<SongPage />}></Route>
         </Route>
       </>
     )
