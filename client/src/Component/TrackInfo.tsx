@@ -1,9 +1,9 @@
 import { Box, Typography } from "@mui/material";
-import { useAudioPlayerContext } from "../context/audio-player-context";
+import { useAudioPlayerStore } from "../store/audioPlayerStore";
 import { BsMusicNoteBeamed } from "react-icons/bs";
 
 const TrackInfo = () => {
-  const { currentTrack } = useAudioPlayerContext();
+  const currentTrack = useAudioPlayerStore((s) => s.currentTrack);
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
       <Box

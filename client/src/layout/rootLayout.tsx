@@ -1,12 +1,13 @@
 import { Outlet } from "react-router-dom";
-import { useAudioPlayerContext } from "../context/audio-player-context";
+import { useAudioPlayerStore } from "../store/audioPlayerStore";
+import { audioRef, onTrackEndRef } from "../audio/audioEngine";
 import Sidebar from "../Component/Sidebar";
 import StatusBar from "../Component/StatusBar";
 import useAudioEngine from "../hooks/useAudioEngine";
 
 const RootLayout = () => {
-  const { audioRef, currentTrack, setDuration, onTrackEndRef } =
-    useAudioPlayerContext();
+  const currentTrack = useAudioPlayerStore((s) => s.currentTrack);
+  const setDuration = useAudioPlayerStore((s) => s.setDuration);
 
   useAudioEngine();
 

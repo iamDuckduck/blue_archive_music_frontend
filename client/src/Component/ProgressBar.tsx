@@ -1,7 +1,12 @@
 import { Box, Slider, styled, Typography } from "@mui/material";
-import { useAudioPlayerContext } from "../context/audio-player-context";
+import { useAudioPlayerStore } from "../store/audioPlayerStore";
+import { audioRef } from "../audio/audioEngine";
 
 const ProgressBar = () => {
+  const duration = useAudioPlayerStore((s) => s.duration);
+  const timeProgress = useAudioPlayerStore((s) => s.timeProgress);
+  const setTimeProgress = useAudioPlayerStore((s) => s.setTimeProgress);
+
   const TinyText = styled(Typography)({
     fontSize: "0.75rem",
     opacity: 0.38,
@@ -31,8 +36,6 @@ const ProgressBar = () => {
     return "00:00";
   };
 
-  const { audioRef, duration, timeProgress, setTimeProgress } =
-    useAudioPlayerContext();
   return (
     <Box
       display="flex"

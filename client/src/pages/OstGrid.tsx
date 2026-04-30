@@ -13,7 +13,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { GRID_DEFAULTS } from "../constants/gridDefaults";
 import { GridPlayButton } from "../Component/GridPlayButton";
 import { AudioPlayer } from "../Component/AudioPlayer";
-import { useAudioPlayerContext } from "../context/audio-player-context";
+import { useAudioPlayerStore } from "../store/audioPlayerStore";
 import type OstPage from "../entities/OstPage";
 
 const OstGrid = () => {
@@ -23,7 +23,8 @@ const OstGrid = () => {
   );
   const [sortModel, setSortModel] = useState(GRID_DEFAULTS.INITIAL_SORT);
   const [filterModel, setFilterModel] = useState(GRID_DEFAULTS.INITIAL_FILTER);
-  const { trackList, setTrackList } = useAudioPlayerContext();
+  const trackList = useAudioPlayerStore((s) => s.trackList);
+  const setTrackList = useAudioPlayerStore((s) => s.setTrackList);
 
   // data query for OST
   const { data } = usePageOST(paginationModel, sortModel, filterModel);

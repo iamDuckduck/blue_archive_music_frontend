@@ -1,10 +1,9 @@
 import { Box, IconButton, Slider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { IoMdVolumeHigh, IoMdVolumeOff, IoMdVolumeLow } from "react-icons/io";
-import { useAudioPlayerContext } from "../context/audio-player-context";
+import { audioRef } from "../audio/audioEngine";
 
 const VolumeControl = () => {
-  const { audioRef } = useAudioPlayerContext();
   const [volume, setVolume] = useState<number>(60);
   const [muteVolume, setMuteVolume] = useState(false);
 
@@ -20,7 +19,7 @@ const VolumeControl = () => {
       audioRef.current.volume = volume / 100;
       audioRef.current.muted = muteVolume;
     }
-  }, [volume, audioRef, muteVolume]);
+  }, [volume, muteVolume]);
 
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "200px" }}>
