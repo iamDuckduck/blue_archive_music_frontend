@@ -32,8 +32,13 @@ const useAudioEngine = () => {
 
   useEffect(() => {
     const tick = () => {
-      if (audioRef.current) {
-        setTimeProgress(audioRef.current.currentTime);
+      const audio = audioRef.current;
+      // Don't mirror progress while the element is seeking or hasn't
+      // buffered enough data to play forward (HAVE_FUTURE_DATA = 3).
+      // This prevents the progress bar from drifting ahead of the
+      // audio while the browser is fetching the seek target.
+      if (audio && !audio.seeking && audio.readyState >= 3) {
+        setTimeProgress(audio.currentTime);
       }
       rafRef.current = requestAnimationFrame(tick);
     };
