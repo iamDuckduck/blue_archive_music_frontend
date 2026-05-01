@@ -44,10 +44,10 @@ interface AudioPlayerState {
   volume: number; // 0-1
   muted: boolean;
 
-  // Legacy setters (still used by useRandomSong; will be culled in cleanup commit)
+  // Random source uses setCurrentTrack via useRandomSong; album/playlist
+  // sources go through loadQueue. setQueue/setQueueIndex are no longer
+  // needed externally.
   setCurrentTrack: (t: Track) => void;
-  setQueue: (q: Track[]) => void;
-  setQueueIndex: (i: number) => void;
 
   setIsPlaying: Dispatch<SetStateAction<boolean>>;
   setTimeProgress: (n: number) => void;
@@ -116,8 +116,6 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
       muted: false,
 
       setCurrentTrack: (t) => set({ currentTrack: t }),
-      setQueue: (q) => set({ queue: q }),
-      setQueueIndex: (i) => set({ queueIndex: i }),
       setIsPlaying: (b) =>
         set((s) => ({
           isPlaying: typeof b === "function" ? b(s.isPlaying) : b,
