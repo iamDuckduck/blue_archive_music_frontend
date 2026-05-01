@@ -1,8 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Dispatch, SetStateAction } from "react";
-import type OstPage from "../entities/OstPage";
-import type OstType from "../entities/OstType";
 
 export interface Track {
   id: number;
@@ -10,18 +8,13 @@ export interface Track {
   src: string;
   author: string;
   thumbnail?: string;
+  /** Source label shown in media bars (e.g. album title for SongPage / random pick). */
+  albumTitle?: string;
 }
 
 interface AudioPlayerState {
   currentTrack: Track;
-  currentType: OstType;
-  trackList: OstPage[];
-  trackIndex: number;
-  /**
-   * Generic Track[] queue used by the new song-page-driven flows.
-   * The legacy `trackList` is OstPage-shaped and tied to the
-   * /OST DataGrid; once that page is removed the two will collapse.
-   */
+  /** Generic Track[] queue used by SongPage and any future page-driven flows. */
   queue: Track[];
   queueIndex: number;
   isPlaying: boolean;
@@ -31,9 +24,6 @@ interface AudioPlayerState {
   muted: boolean;
 
   setCurrentTrack: (t: Track) => void;
-  setCurrentType: (t: OstType) => void;
-  setTrackList: (l: OstPage[]) => void;
-  setTrackIndex: (i: number) => void;
   setQueue: (q: Track[]) => void;
   setQueueIndex: (i: number) => void;
   setIsPlaying: Dispatch<SetStateAction<boolean>>;
@@ -55,9 +45,6 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
   persist(
     (set) => ({
       currentTrack: emptyTrack,
-      currentType: {} as OstType,
-      trackList: [] as OstPage[],
-      trackIndex: 0,
       queue: [] as Track[],
       queueIndex: 0,
       isPlaying: false,
@@ -67,9 +54,6 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
       muted: false,
 
       setCurrentTrack: (t) => set({ currentTrack: t }),
-      setCurrentType: (t) => set({ currentType: t }),
-      setTrackList: (l) => set({ trackList: l }),
-      setTrackIndex: (i) => set({ trackIndex: i }),
       setQueue: (q) => set({ queue: q }),
       setQueueIndex: (i) => set({ queueIndex: i }),
       // Mirrors React's useState setter: accepts either a new value or an

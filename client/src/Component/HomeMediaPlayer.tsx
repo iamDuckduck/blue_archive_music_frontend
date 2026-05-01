@@ -2,8 +2,6 @@ import { useRef, useState } from "react";
 import { Skeleton } from "@mui/material";
 import { useAudioPlayerStore } from "../store/audioPlayerStore";
 import { audioRef } from "../audio/audioEngine";
-import { buildTrackInfo } from "../utils/buildTrackInfo";
-import type OstPage from "../entities/OstPage";
 
 const VOLUME_STEPS = 8;
 
@@ -25,16 +23,15 @@ const HomeMediaPlayer = ({
   isLoading = false,
 }: HomeMediaPlayerProps = {}) => {
   const currentTrack = useAudioPlayerStore((s) => s.currentTrack);
-  const currentType = useAudioPlayerStore((s) => s.currentType);
   const isPlaying = useAudioPlayerStore((s) => s.isPlaying);
   const setIsPlaying = useAudioPlayerStore((s) => s.setIsPlaying);
   const duration = useAudioPlayerStore((s) => s.duration);
   const timeProgress = useAudioPlayerStore((s) => s.timeProgress);
   const setTimeProgress = useAudioPlayerStore((s) => s.setTimeProgress);
-  const trackIndex = useAudioPlayerStore((s) => s.trackIndex);
-  const setTrackIndex = useAudioPlayerStore((s) => s.setTrackIndex);
+  const queue = useAudioPlayerStore((s) => s.queue);
+  const queueIndex = useAudioPlayerStore((s) => s.queueIndex);
+  const setQueueIndex = useAudioPlayerStore((s) => s.setQueueIndex);
   const setCurrentTrack = useAudioPlayerStore((s) => s.setCurrentTrack);
-  const trackList = useAudioPlayerStore((s) => s.trackList);
   const volume = useAudioPlayerStore((s) => s.volume);
   const setVolume = useAudioPlayerStore((s) => s.setVolume);
 
@@ -76,17 +73,20 @@ const HomeMediaPlayer = ({
   };
 
   /* ─── Next / Previous ─── */
+  const goTo = (index: number) => {
+    if (queue.length === 0) return;
+    const wrapped = (index + queue.length) % queue.length;
+    setQueueIndex(wrapped);
+    setCurrentTrack(queue[wrapped]);
+    setIsPlaying(true);
+  };
+
   const handleNext = () => {
     if (onNext) {
       onNext();
       return;
     }
-    if (!trackList || trackList.length === 0) return;
-    const newIndex =
-      trackIndex >= trackList.length - 1 ? 0 : trackIndex + 1;
-    const next = trackList[newIndex];
-    setTrackIndex(newIndex);
-    setCurrentTrack(buildTrackInfo(next as OstPage));
+    goTo(queueIndex + 1);
   };
 
   const handlePrevious = () => {
@@ -94,12 +94,7 @@ const HomeMediaPlayer = ({
       onPrevious();
       return;
     }
-    if (!trackList || trackList.length === 0) return;
-    const newIndex =
-      trackIndex === 0 ? trackList.length - 1 : trackIndex - 1;
-    const prev = trackList[newIndex];
-    setTrackIndex(newIndex);
-    setCurrentTrack(buildTrackInfo(prev as OstPage));
+    goTo(queueIndex - 1);
   };
 
   const progressPercent = duration > 0 ? (timeProgress / duration) * 100 : 0;
@@ -147,7 +142,7 @@ const HomeMediaPlayer = ({
                 {isLoading ? (
                   <Skeleton variant="text" width={120} sx={{ display: "inline-block" }} />
                 ) : (
-                  currentType?.name || ""
+                  currentTrack?.albumTitle || ""
                 )}
               </span>
             </div>
