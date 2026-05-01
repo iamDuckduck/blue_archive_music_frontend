@@ -12,7 +12,6 @@ const formatTime = (secs: number): string => {
 
 const BottomMediaBar = () => {
   const currentTrack = useAudioPlayerStore((s) => s.currentTrack);
-  const currentType = useAudioPlayerStore((s) => s.currentType);
   const isPlaying = useAudioPlayerStore((s) => s.isPlaying);
   const setIsPlaying = useAudioPlayerStore((s) => s.setIsPlaying);
   const duration = useAudioPlayerStore((s) => s.duration);
@@ -100,7 +99,7 @@ const BottomMediaBar = () => {
               Now Playing
             </span>
             <span className="text-sky-600 font-bold text-[9px] uppercase tracking-widest truncate">
-              {currentType?.name || "—"}
+              {currentTrack?.albumTitle || "—"}
             </span>
           </div>
           <h3 className="text-lg font-black uppercase tracking-tight text-slate-800 truncate">

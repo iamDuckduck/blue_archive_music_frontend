@@ -7,7 +7,6 @@ import { useAudioPlayerStore } from "../store/audioPlayerStore";
 import { onTrackEndRef } from "../audio/audioEngine";
 import { songToTrack } from "../utils/songToTrack";
 import { PUBLIC_URL_PREFIX } from "../constants/api";
-import type OstType from "../entities/OstType";
 import type Song from "../entities/Song";
 
 const formatTime = (secs: number): string => {
@@ -24,7 +23,6 @@ const SongPage = () => {
   const { data: album, isLoading, isError } = useAlbumDetails(idNum);
 
   const setCurrentTrack = useAudioPlayerStore((s) => s.setCurrentTrack);
-  const setCurrentType = useAudioPlayerStore((s) => s.setCurrentType);
   const setQueue = useAudioPlayerStore((s) => s.setQueue);
   const setQueueIndex = useAudioPlayerStore((s) => s.setQueueIndex);
   const setIsPlaying = useAudioPlayerStore((s) => s.setIsPlaying);
@@ -34,11 +32,10 @@ const SongPage = () => {
 
   const playFromIndex = (songs: Song[], index: number) => {
     if (songs.length === 0) return;
-    const tracks = songs.map((s, i) => songToTrack(s, i));
+    const tracks = songs.map((s, i) => songToTrack(s, i, album?.title));
     setQueue(tracks);
     setQueueIndex(index);
     setCurrentTrack(tracks[index]);
-    setCurrentType({ name: album?.title ?? "" } as OstType);
     setIsPlaying(true);
   };
 
