@@ -23,8 +23,15 @@ const BottomMediaBar = () => {
   const source = useAudioPlayerStore((s) => s.source);
   const playNext = useAudioPlayerStore((s) => s.playNext);
   const playPrev = useAudioPlayerStore((s) => s.playPrev);
+  const repeat = useAudioPlayerStore((s) => s.repeat);
+  const shuffle = useAudioPlayerStore((s) => s.shuffle);
+  const cycleRepeat = useAudioPlayerStore((s) => s.cycleRepeat);
+  const toggleShuffle = useAudioPlayerStore((s) => s.toggleShuffle);
 
   const hasNav = queue.length > 0 || source?.kind === "random";
+  // Shuffle/repeat only meaningful with an indexed queue (i.e. albums).
+  const canShuffle = queue.length > 1 && source?.kind === "album";
+  const canRepeat = source !== null;
 
   const handlePrev = () => playPrev();
   const handleNext = () => playNext();
@@ -107,6 +114,20 @@ const BottomMediaBar = () => {
       <div className="flex flex-col items-center gap-2 px-12 border-x border-white/20 flex-1 max-w-2xl">
         <div className="flex items-center gap-6">
           <button
+            disabled={!canShuffle}
+            onClick={toggleShuffle}
+            className={`transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer ${
+              shuffle === "on"
+                ? "text-sky-500"
+                : "text-slate-600 hover:text-sky-600"
+            }`}
+            aria-label="Shuffle"
+            aria-pressed={shuffle === "on"}
+            title={shuffle === "on" ? "Shuffle on" : "Shuffle off"}
+          >
+            <span className="material-symbols-outlined text-xl">shuffle</span>
+          </button>
+          <button
             disabled={!hasNav}
             onClick={handlePrev}
             className="text-slate-600 hover:text-sky-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
@@ -137,6 +158,27 @@ const BottomMediaBar = () => {
           >
             <span className="material-symbols-outlined text-2xl">
               skip_next
+            </span>
+          </button>
+          <button
+            disabled={!canRepeat}
+            onClick={cycleRepeat}
+            className={`transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer ${
+              repeat === "off"
+                ? "text-slate-600 hover:text-sky-600"
+                : "text-sky-500"
+            }`}
+            aria-label="Repeat"
+            title={
+              repeat === "off"
+                ? "Repeat off"
+                : repeat === "all"
+                  ? "Repeat all"
+                  : "Repeat one"
+            }
+          >
+            <span className="material-symbols-outlined text-xl">
+              {repeat === "one" ? "repeat_one" : "repeat"}
             </span>
           </button>
         </div>
