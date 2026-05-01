@@ -1,6 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { useAudioPlayerStore } from "../store/audioPlayerStore";
-import { audioRef, onTrackEndRef } from "../audio/audioEngine";
+import { audioRef } from "../audio/audioEngine";
 import Sidebar from "../Component/Sidebar";
 import BottomMediaBar from "../Component/BottomMediaBar";
 import useAudioEngine from "../hooks/useAudioEngine";
@@ -8,6 +8,7 @@ import useAudioEngine from "../hooks/useAudioEngine";
 const RootLayout = () => {
   const currentTrack = useAudioPlayerStore((s) => s.currentTrack);
   const setDuration = useAudioPlayerStore((s) => s.setDuration);
+  const onTrackEnded = useAudioPlayerStore((s) => s.onTrackEnded);
   const location = useLocation();
 
   useAudioEngine();
@@ -17,10 +18,6 @@ const RootLayout = () => {
     if (seconds !== undefined) {
       setDuration(seconds);
     }
-  };
-
-  const onEnded = () => {
-    onTrackEndRef.current?.();
   };
 
   // Home renders its own centered HomeMediaPlayer as the primary UI;
@@ -44,7 +41,7 @@ const RootLayout = () => {
         ref={audioRef}
         src={currentTrack.src}
         onLoadedMetadata={onLoadedMetadata}
-        onEnded={onEnded}
+        onEnded={onTrackEnded}
       />
 
       {/* Sidebar */}
