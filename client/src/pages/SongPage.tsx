@@ -1,10 +1,8 @@
-import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Skeleton } from "@mui/material";
 import PageHeader from "../Component/PageHeader";
 import useAlbumDetails from "../hooks/useAlbumDetails";
 import { useAudioPlayerStore } from "../store/audioPlayerStore";
-import { onTrackEndRef } from "../audio/audioEngine";
 import { songToTrack } from "../utils/songToTrack";
 import { PUBLIC_URL_PREFIX } from "../constants/api";
 import type Song from "../entities/Song";
@@ -22,40 +20,20 @@ const SongPage = () => {
 
   const { data: album, isLoading, isError } = useAlbumDetails(idNum);
 
-  const setCurrentTrack = useAudioPlayerStore((s) => s.setCurrentTrack);
-  const setQueue = useAudioPlayerStore((s) => s.setQueue);
-  const setQueueIndex = useAudioPlayerStore((s) => s.setQueueIndex);
-  const setIsPlaying = useAudioPlayerStore((s) => s.setIsPlaying);
+  const loadQueue = useAudioPlayerStore((s) => s.loadQueue);
   const queue = useAudioPlayerStore((s) => s.queue);
   const queueIndex = useAudioPlayerStore((s) => s.queueIndex);
   const currentTrack = useAudioPlayerStore((s) => s.currentTrack);
 
   const playFromIndex = (songs: Song[], index: number) => {
-    if (songs.length === 0) return;
+    if (songs.length === 0 || idNum === undefined) return;
     const tracks = songs.map((s, i) => songToTrack(s, i, album?.title));
-    setQueue(tracks);
-    setQueueIndex(index);
-    setCurrentTrack(tracks[index]);
-    setIsPlaying(true);
+    loadQueue(tracks, {
+      source: { kind: "album", albumId: idNum, title: album?.title ?? "" },
+      startIndex: index,
+      autoplay: true,
+    });
   };
-
-  // Album-loop policy: when a track ends, advance within the queue.
-  // Registered on mount, cleared on unmount so other pages keep their
-  // own track-end behavior.
-  useEffect(() => {
-    onTrackEndRef.current = () => {
-      const q = useAudioPlayerStore.getState().queue;
-      const i = useAudioPlayerStore.getState().queueIndex;
-      if (q.length === 0) return;
-      const nextIndex = i >= q.length - 1 ? 0 : i + 1;
-      setQueueIndex(nextIndex);
-      setCurrentTrack(q[nextIndex]);
-      setIsPlaying(true);
-    };
-    return () => {
-      onTrackEndRef.current = null;
-    };
-  }, [setCurrentTrack, setQueueIndex, setIsPlaying]);
 
   if (isError) {
     return (

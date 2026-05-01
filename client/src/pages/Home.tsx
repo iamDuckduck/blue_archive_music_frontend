@@ -2,27 +2,34 @@ import { useEffect } from "react";
 import HomeMediaPlayer from "../Component/HomeMediaPlayer";
 import PageHeader from "../Component/PageHeader";
 import useRandomSong from "../hooks/useRandomSong";
-import { onTrackEndRef } from "../audio/audioEngine";
+import { useAudioPlayerStore } from "../store/audioPlayerStore";
 
 const Home = () => {
   const { refetch, isFetching } = useRandomSong();
+  const setRandomFetcher = useAudioPlayerStore((s) => s.setRandomFetcher);
+  const loadQueue = useAudioPlayerStore((s) => s.loadQueue);
+
+  // On mount: claim the random source if no album/playlist is currently
+  // loaded, and register `refetch` as the store's randomFetcher so
+  // onTrackEnded / playNext can request the next random track. On unmount,
+  // un-register the fetcher (any in-flight random ended events will then
+  // pause cleanly instead of silently no-oping).
+  useEffect(() => {
+    const source = useAudioPlayerStore.getState().source;
+    if (!source || source.kind === "random") {
+      loadQueue([], { source: { kind: "random" }, autoplay: false });
+    }
+    setRandomFetcher(() => {
+      refetch();
+    });
+    return () => {
+      setRandomFetcher(null);
+    };
+  }, [refetch, setRandomFetcher, loadQueue]);
 
   const handleRandom = () => {
     refetch();
   };
-
-  // Track-end policy on the Home page: auto-play another random song.
-  // Registered into the shared mailbox so RootLayout's <audio onEnded>
-  // can dispatch to it. Other pages (e.g. OST with Controls) will
-  // register their own handler instead.
-  useEffect(() => {
-    onTrackEndRef.current = () => {
-      refetch();
-    };
-    return () => {
-      onTrackEndRef.current = null;
-    };
-  }, [refetch]);
 
   return (
     <>
