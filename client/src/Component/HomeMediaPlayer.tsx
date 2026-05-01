@@ -28,10 +28,8 @@ const HomeMediaPlayer = ({
   const duration = useAudioPlayerStore((s) => s.duration);
   const timeProgress = useAudioPlayerStore((s) => s.timeProgress);
   const setTimeProgress = useAudioPlayerStore((s) => s.setTimeProgress);
-  const queue = useAudioPlayerStore((s) => s.queue);
-  const queueIndex = useAudioPlayerStore((s) => s.queueIndex);
-  const setQueueIndex = useAudioPlayerStore((s) => s.setQueueIndex);
-  const setCurrentTrack = useAudioPlayerStore((s) => s.setCurrentTrack);
+  const playNext = useAudioPlayerStore((s) => s.playNext);
+  const playPrev = useAudioPlayerStore((s) => s.playPrev);
   const volume = useAudioPlayerStore((s) => s.volume);
   const setVolume = useAudioPlayerStore((s) => s.setVolume);
 
@@ -73,28 +71,16 @@ const HomeMediaPlayer = ({
   };
 
   /* ─── Next / Previous ─── */
-  const goTo = (index: number) => {
-    if (queue.length === 0) return;
-    const wrapped = (index + queue.length) % queue.length;
-    setQueueIndex(wrapped);
-    setCurrentTrack(queue[wrapped]);
-    setIsPlaying(true);
-  };
-
+  // onNext/onPrevious props win so Home can swap in a "load a new random
+  // track" handler; otherwise fall back to the store's queue-aware actions.
   const handleNext = () => {
-    if (onNext) {
-      onNext();
-      return;
-    }
-    goTo(queueIndex + 1);
+    if (onNext) onNext();
+    else playNext();
   };
 
   const handlePrevious = () => {
-    if (onPrevious) {
-      onPrevious();
-      return;
-    }
-    goTo(queueIndex - 1);
+    if (onPrevious) onPrevious();
+    else playPrev();
   };
 
   const progressPercent = duration > 0 ? (timeProgress / duration) * 100 : 0;

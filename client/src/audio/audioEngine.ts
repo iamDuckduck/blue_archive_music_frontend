@@ -1,17 +1,16 @@
 /**
- * Module-level singletons for the audio engine.
+ * Module-level singleton for the audio engine.
  *
- * These are NOT React state. They are plain mutable boxes whose `.current`
- * is written by React (via `<audio ref={audioRef}>` in RootLayout) or by
- * pages (via `onTrackEndRef.current = handler`).
+ * `audioRef.current` is written by React (via `<audio ref={audioRef}>` in
+ * RootLayout) and read by anything that needs to drive the underlying DOM
+ * audio element directly (e.g. seek, repeat="one" restart).
  *
- * They live here — not in the zustand store — because:
- *   1. DOM handles aren't "state" (mutating .current never needs to trigger
- *      a re-render).
- *   2. Keeps the store free of non-serializable, non-reactive fields.
- *   3. Lets `useAudioEngine` import refs without depending on the store.
+ * This is NOT React state — mutating `.current` should never trigger a
+ * re-render — and it lives here, not in the zustand store, to keep the
+ * store free of non-serializable, non-reactive fields.
+ *
+ * Track-end behavior is owned by the store; see `onTrackEnded` in
+ * `audioPlayerStore.ts`.
  */
 
 export const audioRef: { current: HTMLAudioElement | null } = { current: null };
-
-export const onTrackEndRef: { current: (() => void) | null } = { current: null };
