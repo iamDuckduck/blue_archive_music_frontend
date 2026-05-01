@@ -9,21 +9,35 @@ const SONG_RANDOM_ENDPOINT = "/user/song/random";
 const apiClient = new APIClient<Song>(SONG_RANDOM_ENDPOINT);
 
 const useRandomSong = () => {
-  const setCurrentTrack = useAudioPlayerStore((s) => s.setCurrentTrack);
-  const setIsPlaying = useAudioPlayerStore((s) => s.setIsPlaying);
+  const source = useAudioPlayerStore((s) => s.source);
+  const hasTrack = useAudioPlayerStore((s) => !!s.currentTrack.src);
+
+  // Auto-fetch only on the very first entry where playback hasn't started
+  // yet AND no album/playlist source has claimed the player. Subsequent
+  // visits re-use the cached track; the only way to load another random
+  // song is an explicit `refetch()` (registered with the store as
+  // `randomFetcher` so playNext / onTrackEnded can call it).
+  const isRandomScope = !source || source.kind === "random";
+  const shouldAutoFetch = isRandomScope && !hasTrack;
 
   const { data, refetch, isFetching } = useQuery({
     queryKey: ["random-song"],
     queryFn: () => apiClient.getRandomSong(),
-    staleTime: 0,
+    enabled: shouldAutoFetch,
+    staleTime: Infinity,
+    refetchOnMount: false,
     refetchOnWindowFocus: false,
     retry: 1,
   });
 
   useEffect(() => {
     if (!data) return;
+    const s = useAudioPlayerStore.getState();
+    // Album/playlist source has taken over: don't clobber its currentTrack
+    // with a stale random-song response that arrived after navigation.
+    if (s.source && s.source.kind !== "random") return;
 
-    setCurrentTrack({
+    s.setCurrentTrack({
       id: 0,
       name: data.title ?? "",
       src: data.audioPath ? PUBLIC_URL_PREFIX + data.audioPath : "",
@@ -31,8 +45,8 @@ const useRandomSong = () => {
       thumbnail: data.imagePath ? PUBLIC_URL_PREFIX + data.imagePath : "",
       albumTitle: data.albumTitle ?? "",
     });
-    setIsPlaying(true);
-  }, [data, setCurrentTrack, setIsPlaying]);
+    s.setIsPlaying(true);
+  }, [data]);
 
   return { refetch, isFetching };
 };
