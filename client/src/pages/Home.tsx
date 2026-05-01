@@ -9,11 +9,14 @@ const Home = () => {
   const setRandomFetcher = useAudioPlayerStore((s) => s.setRandomFetcher);
   const loadQueue = useAudioPlayerStore((s) => s.loadQueue);
 
-  // On mount: claim the random source if no album/playlist is currently
-  // loaded, and register `refetch` as the store's randomFetcher so
-  // onTrackEnded / playNext can request the next random track. On unmount,
-  // un-register the fetcher (any in-flight random ended events will then
-  // pause cleanly instead of silently no-oping).
+  // On mount:
+  // - If no source is set yet (very first entry), claim a random source so
+  //   onTrackEnded / playNext route to randomFetcher.
+  // - If an album/playlist is already loaded, leave it alone — the user
+  //   visiting Home shouldn't interrupt their album playback.
+  // - Always (re-)register the random fetcher; un-register on unmount so
+  //   tracks ending after navigation pause cleanly instead of silently
+  //   no-oping.
   useEffect(() => {
     const source = useAudioPlayerStore.getState().source;
     if (!source || source.kind === "random") {
@@ -27,10 +30,6 @@ const Home = () => {
     };
   }, [refetch, setRandomFetcher, loadQueue]);
 
-  const handleRandom = () => {
-    refetch();
-  };
-
   return (
     <>
       <section className="absolute top-8 left-8 right-8 z-10">
@@ -38,11 +37,7 @@ const Home = () => {
       </section>
 
       <section className="flex-1 flex items-center justify-center">
-          <HomeMediaPlayer
-            onNext={handleRandom}
-            onPrevious={handleRandom}
-            isLoading={isFetching}
-          />
+        <HomeMediaPlayer isLoading={isFetching} />
       </section>
     </>
   );
