@@ -4,6 +4,7 @@ import { audioRef } from "../audio/audioEngine";
 import Sidebar from "../Component/Sidebar";
 import BottomMediaBar from "../Component/BottomMediaBar";
 import useAudioEngine from "../hooks/useAudioEngine";
+import StatusBar from "../Component/StatusBar";
 
 const RootLayout = () => {
   const currentTrack = useAudioPlayerStore((s) => s.currentTrack);
@@ -57,7 +58,7 @@ const RootLayout = () => {
       </main>
 
       {/* Bottom Media Bar (hidden on Home) */}
-      {!isHome && <BottomMediaBar />}
+      {!isHome ? <BottomMediaBar /> : <StatusBar />}
     </div>
   );
 };
