@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useAudioPlayerStore } from "../store/audioPlayerStore";
 import { audioRef } from "../audio/audioEngine";
+import QueuePanel from "./QueuePanel";
 
 const VOLUME_STEPS = 8;
 
@@ -45,6 +46,7 @@ const BottomMediaBar = () => {
 
   const progressBarRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [showQueue, setShowQueue] = useState(false);
 
   const seek = (clientX: number) => {
     const bar = progressBarRef.current;
@@ -208,17 +210,26 @@ const BottomMediaBar = () => {
 
       {/* Right: queue + volume */}
       <div className="flex items-center gap-6 flex-1 justify-end">
-        <button
-          className="text-slate-600 hover:text-sky-600 transition-all flex flex-col items-center cursor-pointer disabled:opacity-40"
-          disabled
-          aria-label="Queue"
-          title="Queue (coming soon)"
-        >
-          <span className="material-symbols-outlined text-xl">
-            queue_music
-          </span>
-          <span className="text-[8px] uppercase font-bold">Queue</span>
-        </button>
+        <div className="relative">
+          <QueuePanel isOpen={showQueue} onClose={() => setShowQueue(false)} />
+          <button
+            onClick={() => setShowQueue((p) => !p)}
+            disabled={queue.length === 0}
+            className={`transition-all flex flex-col items-center cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+              showQueue
+                ? "text-sky-500"
+                : "text-slate-600 hover:text-sky-600"
+            }`}
+            aria-label="Queue"
+            aria-pressed={showQueue}
+            title="Queue"
+          >
+            <span className="material-symbols-outlined text-xl">
+              queue_music
+            </span>
+            <span className="text-[8px] uppercase font-bold">Queue</span>
+          </button>
+        </div>
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined text-lg text-slate-600">
             {volumeLevel === 0
