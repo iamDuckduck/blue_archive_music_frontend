@@ -15,7 +15,8 @@ export interface Track {
 
 export type PlaybackSource =
   | { kind: "album"; albumId: number; title: string }
-  | { kind: "random" };
+  /** Auto-populated discover queue — random songs fetched on first load or near-end refill. */
+  | { kind: "discover" };
 
 export type RepeatMode = "off" | "all" | "one";
 export type ShuffleMode = "off" | "on";
@@ -35,7 +36,8 @@ interface AudioPlayerState {
   shuffle: ShuffleMode;
   /** Permutation of queue indices used while `shuffle === "on"`. */
   shuffledOrder: number[] | null;
-  /** random-song-list query's isFetching flag. */
+
+  /** random-song-list query's isFetching flag*/
   randomLoading: boolean;
 
   isPlaying: boolean;
@@ -43,10 +45,6 @@ interface AudioPlayerState {
   duration: number;
   volume: number; // 0-1
   muted: boolean;
-
-  // Album/playlist/random-list sources go through loadQueue.
-  // setQueue/setQueueIndex are no longer needed externally.
-  setCurrentTrack: (t: Track) => void;
 
   setIsPlaying: Dispatch<SetStateAction<boolean>>;
   setTimeProgress: (n: number) => void;
@@ -63,6 +61,8 @@ interface AudioPlayerState {
   setRepeat: (mode: RepeatMode) => void;
   cycleRepeat: () => void;
   toggleShuffle: () => void;
+  appendToQueue: (tracks: Track[]) => void;
+  setSource: (source: PlaybackSource | null) => void;
   setRandomLoading: (v: boolean) => void;
 }
 
@@ -106,6 +106,7 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
       repeat: "off",
       shuffle: "off",
       shuffledOrder: null,
+
       randomLoading: false,
 
       isPlaying: false,
@@ -113,8 +114,6 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
       duration: 0,
       volume: 0.6,
       muted: false,
-
-      setCurrentTrack: (t) => set({ currentTrack: t }),
       setIsPlaying: (b) =>
         set((s) => ({
           isPlaying: typeof b === "function" ? b(s.isPlaying) : b,
@@ -141,7 +140,7 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
           isPlaying: tracks.length > 0 ? autoplay : false,
           ...(reset
             ? {
-                repeat: opts.source.kind === "album" ? "all" : "off",
+            repeat: opts.source.kind === "album" ? "all" : "off",
                 shuffle: "off",
                 shuffledOrder: null,
               }
@@ -222,6 +221,18 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
           repeat:
             s.repeat === "off" ? "all" : s.repeat === "all" ? "one" : "off",
         })),
+      appendToQueue: (tracks) =>
+        set((s) => ({
+          queue: [...s.queue, ...tracks],
+          // If shuffle is on, append new indices to the end of shuffledOrder.
+          shuffledOrder:
+            s.shuffle === "on" && s.shuffledOrder
+              ? [
+                  ...s.shuffledOrder,
+                  ...tracks.map((_, i) => s.queue.length + i),
+                ]
+              : s.shuffledOrder,
+        })),
 
       toggleShuffle: () => {
         const s = get();
@@ -240,6 +251,7 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
       },
 
       setRandomLoading: (v) => set({ randomLoading: v }),
+      setSource: (source) => set({ source }),
     }),
     {
       name: "ba-audio-player",
