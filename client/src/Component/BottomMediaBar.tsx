@@ -28,7 +28,7 @@ const BottomMediaBar = () => {
   const cycleRepeat = useAudioPlayerStore((s) => s.cycleRepeat);
   const toggleShuffle = useAudioPlayerStore((s) => s.toggleShuffle);
 
-  const hasNav = queue.length > 0 || source?.kind === "random";
+  const hasNav = queue.length > 0;
   // Shuffle/repeat only meaningful with an indexed queue (i.e. albums).
   const canShuffle = queue.length > 1 && source?.kind === "album";
   const canRepeat = source !== null;
