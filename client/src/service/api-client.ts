@@ -12,7 +12,7 @@ class APIClient<T> {
     this.endpoint = endpoint;
   }
 
-  getRandomSong = () => {
+  getRandomSongList = () => {
     return axiosInstance.get<T>(this.endpoint).then((res) => res.data);
   };
 }

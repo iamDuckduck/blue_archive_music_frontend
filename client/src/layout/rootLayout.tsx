@@ -4,6 +4,7 @@ import { audioRef } from "../audio/audioEngine";
 import Sidebar from "../Component/Sidebar";
 import BottomMediaBar from "../Component/BottomMediaBar";
 import useAudioEngine from "../hooks/useAudioEngine";
+import useRandomSongList from "../hooks/useRandomSongList";
 import StatusBar from "../Component/StatusBar";
 
 const RootLayout = () => {
@@ -13,6 +14,7 @@ const RootLayout = () => {
   const location = useLocation();
 
   useAudioEngine();
+  useRandomSongList();
 
   const onLoadedMetadata = () => {
     const seconds = audioRef.current?.duration;
@@ -21,8 +23,6 @@ const RootLayout = () => {
     }
   };
 
-  // Home renders its own centered HomeMediaPlayer as the primary UI;
-  // every other route gets the fixed compact BottomMediaBar instead.
   const isHome = location.pathname === "/";
 
   return (
