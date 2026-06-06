@@ -5,6 +5,7 @@ import Sidebar from "../Component/Sidebar";
 import BottomMediaBar from "../Component/BottomMediaBar";
 import useAudioEngine from "../hooks/useAudioEngine";
 import useRandomSongList from "../hooks/useRandomSongList";
+import useSongPlayCount from "../hooks/useSongPlayCount";
 import StatusBar from "../Component/StatusBar";
 
 const RootLayout = () => {
@@ -15,6 +16,7 @@ const RootLayout = () => {
 
   useAudioEngine();
   useRandomSongList();
+  useSongPlayCount();
 
   const onLoadedMetadata = () => {
     const seconds = audioRef.current?.duration;

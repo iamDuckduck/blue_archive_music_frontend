@@ -5,6 +5,7 @@ import { audioRef } from "../audio/audioEngine";
 
 export interface Track {
   id: number;
+  songId?: number;
   name: string;
   src: string;
   author: string;
@@ -29,6 +30,7 @@ interface LoadQueueOptions {
 
 interface AudioPlayerState {
   currentTrack: Track;
+  playCountResetKey: number;
   queue: Track[];
   queueIndex: number;
   source: PlaybackSource | null;
@@ -100,6 +102,7 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
   persist(
     (set, get) => ({
       currentTrack: emptyTrack,
+      playCountResetKey: 0,
       queue: [] as Track[],
       queueIndex: 0,
       source: null,
@@ -136,11 +139,13 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
           queue: tracks,
           queueIndex: safeIndex,
           currentTrack: tracks[safeIndex] ?? s.currentTrack,
+          playCountResetKey:
+            tracks.length > 0 ? s.playCountResetKey + 1 : s.playCountResetKey,
           source: opts.source,
           isPlaying: tracks.length > 0 ? autoplay : false,
           ...(reset
             ? {
-            repeat: opts.source.kind === "album" ? "all" : "off",
+                repeat: opts.source.kind === "album" ? "all" : "off",
                 shuffle: "off",
                 shuffledOrder: null,
               }
@@ -161,6 +166,7 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
         set({
           queueIndex: nextIndex,
           currentTrack: s.queue[nextIndex],
+          playCountResetKey: s.playCountResetKey + 1,
           isPlaying: true,
         });
       },
@@ -178,6 +184,7 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
         set({
           queueIndex: prevIndex,
           currentTrack: s.queue[prevIndex],
+          playCountResetKey: s.playCountResetKey + 1,
           isPlaying: true,
         });
       },
@@ -211,6 +218,7 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
         set({
           queueIndex: nextIndex,
           currentTrack: s.queue[nextIndex],
+          playCountResetKey: s.playCountResetKey + 1,
           isPlaying: true,
         });
       },

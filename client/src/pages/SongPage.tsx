@@ -88,8 +88,10 @@ const SongPage = () => {
                   <span className="text-sm font-bold text-slate-800 uppercase truncate max-w-[200px]">
                     {Array.from(
                       new Set(
-                        (album?.songList ?? []).flatMap((s) => s.composers ?? [])
-                      )
+                        (album?.songList ?? []).flatMap(
+                          (s) => s.composers ?? [],
+                        ),
+                      ),
                     )
                       .slice(0, 3)
                       .join(", ") || "—"}
@@ -133,7 +135,7 @@ const SongPage = () => {
                   onClick={() => {
                     if (!album?.songList?.length) return;
                     const start = Math.floor(
-                      Math.random() * album.songList.length
+                      Math.random() * album.songList.length,
                     );
                     playFromIndex(album.songList, start);
                   }}
