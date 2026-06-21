@@ -1,54 +1,23 @@
-# React + TypeScript + Vite
+# Blue Archive Music Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Environment Config
 
-Currently, two official plugins are available:
+Vite exposes only variables prefixed with `VITE_` to browser code. Do not put secrets, passwords, private tokens, or access keys in frontend env files.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+For local development, create `client/.env.local`:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```env
+VITE_API_BASE_URL=http://localhost:8080
+VITE_PUBLIC_MEDIA_BASE_URL=https://<public-r2-dev-url>/
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+For Cloudflare Pages production, set these environment variables in the Pages project settings:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```env
+VITE_API_BASE_URL=https://<railway-backend-domain>
+VITE_PUBLIC_MEDIA_BASE_URL=https://<r2-public-domain-or-r2-dev-url>/
 ```
+
+`VITE_API_BASE_URL` should point to the Spring Boot backend.
+
+`VITE_PUBLIC_MEDIA_BASE_URL` should point to the public media host used for song audio and images. It is safe for this value to be visible because the frontend needs it to load public assets.
