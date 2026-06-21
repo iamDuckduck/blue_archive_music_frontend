@@ -1,8 +1,8 @@
 import axios from "axios";
+import { API_BASE_URL } from "../constants/api";
 
-// TODO use env variable to config baseURL bewteen dev and production
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: API_BASE_URL,
 });
 
 class APIClient<T> {

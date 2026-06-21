@@ -1,4 +1,5 @@
-export const API_BASE_URL = "http://localhost:8080";
+export const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
 export const OST_PAGE_URL = "/user/ost/page";
 export const OST_LIST_URL = "/user/ost/list";
 export const OST_AUDIO_ENDPOINT = "/user/ost/audio";
