@@ -1,11 +1,15 @@
 import { NavLink } from "react-router-dom";
 
+interface SidebarProps {
+  onSearchOpen: () => void;
+}
+
 const navItems = [
   { to: "/", icon: "home", label: "Home" },
   { to: "/library", icon: "library_music", label: "Library" },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ onSearchOpen }: SidebarProps) => {
   return (
     <aside className="fixed left-0 top-0 h-full flex flex-col z-50 bg-white/40 backdrop-blur-2xl w-48 border-r border-white/40">
       {/* Logo */}
@@ -19,6 +23,20 @@ const Sidebar = () => {
 
       {/* Navigation */}
       <nav className="flex flex-col items-center flex-1 overflow-y-auto custom-scrollbar px-4 pt-4">
+        <button
+          type="button"
+          onClick={onSearchOpen}
+          className="ba-sidebar-button cursor-pointer"
+          aria-label="Search"
+        >
+          <span className="material-symbols-outlined mb-2 text-3xl">
+            search
+          </span>
+          <span className="font-bold tracking-tighter uppercase text-[10px]">
+            Search
+          </span>
+        </button>
+
         {navItems.map((item) => (
           <NavLink
             key={item.to}
