@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { useAudioPlayerStore } from "../store/audioPlayerStore";
 import { audioRef } from "../audio/audioEngine";
@@ -7,8 +8,10 @@ import useAudioEngine from "../hooks/useAudioEngine";
 import useRandomSongList from "../hooks/useRandomSongList";
 import useSongPlayCount from "../hooks/useSongPlayCount";
 import StatusBar from "../Component/StatusBar";
+import SearchModal from "../Component/SearchModal";
 
 const RootLayout = () => {
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const currentTrack = useAudioPlayerStore((s) => s.currentTrack);
   const setDuration = useAudioPlayerStore((s) => s.setDuration);
   const onTrackEnded = useAudioPlayerStore((s) => s.onTrackEnded);
@@ -48,7 +51,7 @@ const RootLayout = () => {
       />
 
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar onSearchOpen={() => setIsSearchOpen(true)} />
 
       {/* Main Content Area */}
       <main
@@ -61,6 +64,10 @@ const RootLayout = () => {
 
       {/* Bottom Media Bar (hidden on Home) */}
       {!isHome ? <BottomMediaBar /> : <StatusBar />}
+
+      {isSearchOpen && (
+        <SearchModal onClose={() => setIsSearchOpen(false)} />
+      )}
     </div>
   );
 };
