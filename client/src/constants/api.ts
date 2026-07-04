@@ -7,6 +7,7 @@ export const OST_IMAGE_ENDPOINT = "/user/ost/image";
 export const OST_TYPE_BASE_ENDPOINT = "user/ostType";
 export const SONG_PLAY_COUNT_ENDPOINT = (songId: number) =>
   `/user/song/${songId}/play`;
+export const MUSIC_SEARCH_ENDPOINT = "/user/search";
 export const PUBLIC_URL_PREFIX =
   import.meta.env.VITE_PUBLIC_MEDIA_BASE_URL ??
   "https://pub-185cd71ac9b44750afc23319e9e08130.r2.dev/";
