@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { PUBLIC_URL_PREFIX } from "../constants/api";
+import useMusicSearch from "../hooks/useMusicSearch";
 
 interface SearchModalProps {
   onClose: () => void;
@@ -6,6 +8,10 @@ interface SearchModalProps {
 
 const SearchModal = ({ onClose }: SearchModalProps) => {
   const [query, setQuery] = useState("");
+  const { data, isFetching, isError } = useMusicSearch(query);
+  const hasQuery = query.trim().length > 0;
+  const hasResults =
+    (data?.albums.length ?? 0) > 0 || (data?.songs.length ?? 0) > 0;
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -58,6 +64,90 @@ const SearchModal = ({ onClose }: SearchModalProps) => {
               type="search"
             />
           </div>
+        </div>
+
+        <div className="mt-8 h-[250px] overflow-y-auto custom-scrollbar pr-3">
+          {hasQuery && isFetching && (
+            <div className="h-full flex items-center justify-center gap-3 text-slate-500">
+              <span className="material-symbols-outlined animate-spin">
+                progress_activity
+              </span>
+              <p className="text-sm font-bold uppercase">Searching...</p>
+            </div>
+          )}
+
+          {hasQuery && !isFetching && isError && (
+            <div className="h-full flex items-center justify-center text-red-500/80">
+              <p className="text-sm font-bold uppercase">
+                Search failed. Please try again.
+              </p>
+            </div>
+          )}
+
+          {hasQuery && !isFetching && !isError && data && !hasResults && (
+            <div className="h-full flex items-center justify-center text-slate-500">
+              <p className="text-sm font-bold uppercase">No results found.</p>
+            </div>
+          )}
+
+          {hasQuery && !isFetching && !isError && data && hasResults && (
+            <div className="space-y-8">
+              {data.albums.length > 0 && (
+                <section>
+                  <h2 className="mb-3 text-xs font-black uppercase text-sky-500">
+                    Albums
+                  </h2>
+                  <div className="grid grid-cols-2 gap-3">
+                    {data.albums.map((album) => (
+                      <div
+                        key={album.id}
+                        className="flex min-w-0 items-center gap-4 border-l-4 border-sky-400 bg-white/55 p-3"
+                      >
+                        <img
+                          src={`${PUBLIC_URL_PREFIX}${album.coverImagePath}`}
+                          alt=""
+                          className="h-14 w-14 shrink-0 object-cover"
+                        />
+                        <p className="truncate font-bold text-slate-700">
+                          {album.title}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {data.songs.length > 0 && (
+                <section>
+                  <h2 className="mb-3 text-xs font-black uppercase text-sky-500">
+                    Songs
+                  </h2>
+                  <div className="space-y-2">
+                    {data.songs.map((song) => (
+                      <div
+                        key={song.id}
+                        className="flex min-w-0 items-center gap-4 bg-white/45 p-3"
+                      >
+                        <img
+                          src={`${PUBLIC_URL_PREFIX}${song.imagePath}`}
+                          alt=""
+                          className="h-12 w-12 shrink-0 object-cover"
+                        />
+                        <div className="min-w-0">
+                          <p className="truncate font-bold text-slate-700">
+                            {song.title}
+                          </p>
+                          <p className="truncate text-xs font-semibold uppercase text-slate-500">
+                            {song.albumTitle}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </div>
+          )}
         </div>
       </section>
     </div>
