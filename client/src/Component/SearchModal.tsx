@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PUBLIC_URL_PREFIX } from "../constants/api";
 import useMusicSearch from "../hooks/useMusicSearch";
 
@@ -8,10 +9,16 @@ interface SearchModalProps {
 
 const SearchModal = ({ onClose }: SearchModalProps) => {
   const [query, setQuery] = useState("");
+  const navigate = useNavigate();
   const { data, isFetching, isError } = useMusicSearch(query);
   const hasQuery = query.trim().length > 0;
   const hasResults =
     (data?.albums.length ?? 0) > 0 || (data?.songs.length ?? 0) > 0;
+
+  const openAlbum = (albumId: number) => {
+    onClose();
+    navigate(`/library/albums/${albumId}`);
+  };
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -99,9 +106,11 @@ const SearchModal = ({ onClose }: SearchModalProps) => {
                   </h2>
                   <div className="grid grid-cols-2 gap-3">
                     {data.albums.map((album) => (
-                      <div
+                      <button
+                        type="button"
                         key={album.id}
-                        className="flex min-w-0 items-center gap-4 border-l-4 border-sky-400 bg-white/55 p-3"
+                        onClick={() => openAlbum(album.id)}
+                        className="flex w-full min-w-0 items-center gap-4 border-l-4 border-sky-400 bg-white/55 p-3 text-left transition-colors hover:bg-sky-50/80 focus-visible:outline-2 focus-visible:outline-sky-500 cursor-pointer"
                       >
                         <img
                           src={`${PUBLIC_URL_PREFIX}${album.coverImagePath}`}
@@ -111,7 +120,7 @@ const SearchModal = ({ onClose }: SearchModalProps) => {
                         <p className="truncate font-bold text-slate-700">
                           {album.title}
                         </p>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </section>
@@ -124,9 +133,11 @@ const SearchModal = ({ onClose }: SearchModalProps) => {
                   </h2>
                   <div className="space-y-2">
                     {data.songs.map((song) => (
-                      <div
+                      <button
+                        type="button"
                         key={song.id}
-                        className="flex min-w-0 items-center gap-4 bg-white/45 p-3"
+                        onClick={() => openAlbum(song.albumId)}
+                        className="flex w-full min-w-0 items-center gap-4 bg-white/45 p-3 text-left transition-colors hover:bg-sky-50/80 focus-visible:outline-2 focus-visible:outline-sky-500 cursor-pointer"
                       >
                         <img
                           src={`${PUBLIC_URL_PREFIX}${song.imagePath}`}
@@ -141,7 +152,7 @@ const SearchModal = ({ onClose }: SearchModalProps) => {
                             {song.albumTitle}
                           </p>
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </section>
