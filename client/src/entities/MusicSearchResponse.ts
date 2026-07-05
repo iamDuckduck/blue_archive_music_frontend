@@ -10,6 +10,7 @@ export interface SongSearchResult {
   albumId: number;
   albumTitle: string;
   imagePath: string;
+  audioPath: string;
 }
 
 export default interface MusicSearchResponse {
