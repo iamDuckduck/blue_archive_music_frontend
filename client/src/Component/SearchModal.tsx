@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PUBLIC_URL_PREFIX } from "../constants/api";
 import useMusicSearch from "../hooks/useMusicSearch";
+import useSearchAlbumPlayback from "../hooks/useSearchAlbumPlayback";
 
 interface SearchModalProps {
   onClose: () => void;
@@ -10,6 +11,7 @@ interface SearchModalProps {
 const SearchModal = ({ onClose }: SearchModalProps) => {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
+  const { playAlbum, loadingAlbumId } = useSearchAlbumPlayback();
   const { data, isFetching, isError } = useMusicSearch(query);
   const hasQuery = query.trim().length > 0;
   const hasResults =
@@ -18,6 +20,13 @@ const SearchModal = ({ onClose }: SearchModalProps) => {
   const openAlbum = (albumId: number) => {
     onClose();
     navigate(`/library/albums/${albumId}`);
+  };
+
+  const handleAlbumPlay = async (albumId: number) => {
+    const started = await playAlbum(albumId);
+    if (started) {
+      onClose();
+    }
   };
 
   useEffect(() => {
@@ -106,21 +115,39 @@ const SearchModal = ({ onClose }: SearchModalProps) => {
                   </h2>
                   <div className="grid grid-cols-2 gap-3">
                     {data.albums.map((album) => (
-                      <button
-                        type="button"
+                      <div
                         key={album.id}
-                        onClick={() => openAlbum(album.id)}
-                        className="flex w-full min-w-0 items-center gap-4 border-l-4 border-sky-400 bg-white/55 p-3 text-left transition-colors hover:bg-sky-50/80 focus-visible:outline-2 focus-visible:outline-sky-500 cursor-pointer"
+                        className="flex min-w-0 items-center gap-4 border-l-4 border-sky-400 bg-white/55 p-3 transition-colors hover:bg-sky-50/80"
                       >
-                        <img
-                          src={`${PUBLIC_URL_PREFIX}${album.coverImagePath}`}
-                          alt=""
-                          className="h-14 w-14 shrink-0 object-cover"
-                        />
-                        <p className="truncate font-bold text-slate-700">
+                        <button
+                          type="button"
+                          onClick={() => handleAlbumPlay(album.id)}
+                          disabled={loadingAlbumId !== null}
+                          className="group relative h-14 w-14 shrink-0 overflow-hidden cursor-pointer disabled:cursor-wait"
+                          aria-label={`Play ${album.title}`}
+                          title={`Play ${album.title}`}
+                        >
+                          <img
+                            src={`${PUBLIC_URL_PREFIX}${album.coverImagePath}`}
+                            alt=""
+                            className="h-full w-full object-cover"
+                          />
+                          <span className="absolute inset-0 flex items-center justify-center bg-slate-900/55 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                            <span className="material-symbols-outlined">
+                              {loadingAlbumId === album.id
+                                ? "progress_activity"
+                                : "play_arrow"}
+                            </span>
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => openAlbum(album.id)}
+                          className="min-w-0 flex-1 truncate text-left font-bold text-slate-700 cursor-pointer focus-visible:outline-2 focus-visible:outline-sky-500"
+                        >
                           {album.title}
-                        </p>
-                      </button>
+                        </button>
+                      </div>
                     ))}
                   </div>
                 </section>

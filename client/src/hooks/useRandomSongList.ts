@@ -14,14 +14,13 @@ const apiClient = new APIClient<Song[]>(SONG_RANDOM_ENDPOINT);
  * Fetches in two cases:
  * 1. Initial load — no active track yet (first visit, any route).
  * 2. Near-end refill — any source, repeat="off", ≤2 tracks remaining.
- *    After appending, source is updated to "discover" so subsequent
+ *    After appending, the queue becomes discover-backed so subsequent
  *    near-end checks keep refilling instead of stopping.
  */
 const useRandomSongList = () => {
   const setRandomLoading = useAudioPlayerStore((s) => s.setRandomLoading);
   const loadQueue = useAudioPlayerStore((s) => s.loadQueue);
-  const appendToQueue = useAudioPlayerStore((s) => s.appendToQueue);
-  const setSource = useAudioPlayerStore((s) => s.setSource);
+  const appendDiscoverTracks = useAudioPlayerStore((s) => s.appendDiscoverTracks);
 
   const hasTrack = useAudioPlayerStore((s) => !!s.currentTrack.src);
   const queueIndex = useAudioPlayerStore((s) => s.queueIndex);
@@ -43,7 +42,7 @@ const useRandomSongList = () => {
     enabled: shouldFetch,
     // staleTime: 0 ensures re-fetch every time enabled flips back to true
     // (near-end refill triggers). Without this, React Query returns the
-    // cached list silently and appendToQueue would never run again.
+    // cached list silently and appendDiscoverTracks would never run again.
     staleTime: 0,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
@@ -79,11 +78,8 @@ const useRandomSongList = () => {
     const tracks = songs.map((song, i) =>
       songToTrack(song, queue.length + i, song.albumTitle),
     );
-    appendToQueue(tracks);
-    // Signal that the queue is now discover-backed so further near-end
-    // refills keep working (and UI can reflect the source change).
-    setSource({ kind: "discover" });
-  }, [songs, loadQueue, appendToQueue, setSource]);
+    appendDiscoverTracks(tracks);
+  }, [songs, loadQueue, appendDiscoverTracks]);
 };
 
 export default useRandomSongList;
