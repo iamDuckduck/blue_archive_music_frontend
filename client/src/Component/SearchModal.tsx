@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PUBLIC_URL_PREFIX } from "../constants/api";
+import type { SongSearchResult } from "../entities/MusicSearchResponse";
 import useMusicSearch from "../hooks/useMusicSearch";
 import useSearchAlbumPlayback from "../hooks/useSearchAlbumPlayback";
+import useSearchSongPlayback from "../hooks/useSearchSongPlayback";
 
 interface SearchModalProps {
   onClose: () => void;
@@ -12,6 +14,7 @@ const SearchModal = ({ onClose }: SearchModalProps) => {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
   const { playAlbum, loadingAlbumId } = useSearchAlbumPlayback();
+  const { playSong } = useSearchSongPlayback();
   const { data, isFetching, isError } = useMusicSearch(query);
   const hasQuery = query.trim().length > 0;
   const hasResults =
@@ -27,6 +30,11 @@ const SearchModal = ({ onClose }: SearchModalProps) => {
     if (started) {
       onClose();
     }
+  };
+
+  const handleSongPlay = (song: SongSearchResult) => {
+    playSong(song);
+    onClose();
   };
 
   useEffect(() => {
@@ -160,26 +168,41 @@ const SearchModal = ({ onClose }: SearchModalProps) => {
                   </h2>
                   <div className="space-y-2">
                     {data.songs.map((song) => (
-                      <button
-                        type="button"
+                      <div
                         key={song.id}
-                        onClick={() => openAlbum(song.albumId)}
-                        className="flex w-full min-w-0 items-center gap-4 bg-white/45 p-3 text-left transition-colors hover:bg-sky-50/80 focus-visible:outline-2 focus-visible:outline-sky-500 cursor-pointer"
+                        className="flex min-w-0 items-center gap-4 bg-white/45 p-3 transition-colors hover:bg-sky-50/80"
                       >
-                        <img
-                          src={`${PUBLIC_URL_PREFIX}${song.imagePath}`}
-                          alt=""
-                          className="h-12 w-12 shrink-0 object-cover"
-                        />
-                        <div className="min-w-0">
+                        <button
+                          type="button"
+                          onClick={() => handleSongPlay(song)}
+                          className="group relative h-12 w-12 shrink-0 overflow-hidden cursor-pointer"
+                          aria-label={`Play ${song.title}`}
+                          title={`Play ${song.title}`}
+                        >
+                          <img
+                            src={`${PUBLIC_URL_PREFIX}${song.imagePath}`}
+                            alt=""
+                            className="h-full w-full object-cover"
+                          />
+                          <span className="absolute inset-0 flex items-center justify-center bg-slate-900/55 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                            <span className="material-symbols-outlined">
+                              play_arrow
+                            </span>
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => openAlbum(song.albumId)}
+                          className="min-w-0 flex-1 text-left cursor-pointer focus-visible:outline-2 focus-visible:outline-sky-500"
+                        >
                           <p className="truncate font-bold text-slate-700">
                             {song.title}
                           </p>
                           <p className="truncate text-xs font-semibold uppercase text-slate-500">
                             {song.albumTitle}
                           </p>
-                        </div>
-                      </button>
+                        </button>
+                      </div>
                     ))}
                   </div>
                 </section>
