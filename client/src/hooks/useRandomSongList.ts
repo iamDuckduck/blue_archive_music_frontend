@@ -1,12 +1,8 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import APIClient from "../service/api-client";
-import type Song from "../entities/Song";
 import { useAudioPlayerStore } from "../store/audioPlayerStore";
 import { songToTrack } from "../utils/songToTrack";
-
-const SONG_RANDOM_ENDPOINT = "/user/song/random/list";
-const apiClient = new APIClient<Song[]>(SONG_RANDOM_ENDPOINT);
+import { getRandomSongList } from "../service/randomSongService";
 
 /**
  * Manages the discover/random queue. Mounted once in RootLayout.
@@ -38,7 +34,7 @@ const useRandomSongList = () => {
 
   const { data: songs, isFetching } = useQuery({
     queryKey: ["random-song-list"],
-    queryFn: () => apiClient.getRandomSongList(),
+    queryFn: getRandomSongList,
     enabled: shouldFetch,
     // staleTime: 0 ensures re-fetch every time enabled flips back to true
     // (near-end refill triggers). Without this, React Query returns the
