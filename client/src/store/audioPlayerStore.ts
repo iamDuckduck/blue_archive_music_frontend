@@ -63,8 +63,7 @@ interface AudioPlayerState {
   setRepeat: (mode: RepeatMode) => void;
   cycleRepeat: () => void;
   toggleShuffle: () => void;
-  appendToQueue: (tracks: Track[]) => void;
-  setSource: (source: PlaybackSource | null) => void;
+  appendDiscoverTracks: (tracks: Track[]) => void;
   setRandomLoading: (v: boolean) => void;
 }
 
@@ -73,18 +72,6 @@ const emptyTrack: Track = {
   name: "",
   src: "",
   author: "",
-};
-
-const sourceKindChanged = (
-  prev: PlaybackSource | null,
-  next: PlaybackSource,
-): boolean => {
-  if (!prev) return true;
-  if (prev.kind !== next.kind) return true;
-  if (prev.kind === "album" && next.kind === "album") {
-    return prev.albumId !== next.albumId;
-  }
-  return false;
 };
 
 const buildShuffledOrder = (length: number, pinFirst: number): number[] => {
@@ -130,27 +117,30 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
       loadQueue: (tracks, opts) => {
         const startIndex = opts.startIndex ?? 0;
         const autoplay = opts.autoplay ?? true;
-        const reset = sourceKindChanged(get().source, opts.source);
         const safeIndex =
           tracks.length === 0
             ? 0
             : Math.min(Math.max(0, startIndex), tracks.length - 1);
-        set((s) => ({
-          queue: tracks,
-          queueIndex: safeIndex,
-          currentTrack: tracks[safeIndex] ?? s.currentTrack,
-          playCountResetKey:
-            tracks.length > 0 ? s.playCountResetKey + 1 : s.playCountResetKey,
-          source: opts.source,
-          isPlaying: tracks.length > 0 ? autoplay : false,
-          ...(reset
-            ? {
-                repeat: opts.source.kind === "album" ? "all" : "off",
-                shuffle: "off",
-                shuffledOrder: null,
-              }
-            : {}),
-        }));
+        set((s) => {
+          const preserveShuffle =
+            opts.source.kind === "album" &&
+            s.shuffle === "on" &&
+            tracks.length > 0;
+
+          return {
+            queue: tracks,
+            queueIndex: safeIndex,
+            currentTrack: tracks[safeIndex] ?? s.currentTrack,
+            playCountResetKey:
+              tracks.length > 0 ? s.playCountResetKey + 1 : s.playCountResetKey,
+            source: opts.source,
+            isPlaying: tracks.length > 0 ? autoplay : false,
+            shuffle: preserveShuffle ? "on" : "off",
+            shuffledOrder: preserveShuffle
+              ? buildShuffledOrder(tracks.length, safeIndex)
+              : null,
+          };
+        });
       },
 
       playNext: () => {
@@ -229,17 +219,12 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
           repeat:
             s.repeat === "off" ? "all" : s.repeat === "all" ? "one" : "off",
         })),
-      appendToQueue: (tracks) =>
+      appendDiscoverTracks: (tracks) =>
         set((s) => ({
           queue: [...s.queue, ...tracks],
-          // If shuffle is on, append new indices to the end of shuffledOrder.
-          shuffledOrder:
-            s.shuffle === "on" && s.shuffledOrder
-              ? [
-                  ...s.shuffledOrder,
-                  ...tracks.map((_, i) => s.queue.length + i),
-                ]
-              : s.shuffledOrder,
+          source: { kind: "discover" },
+          shuffle: "off",
+          shuffledOrder: null,
         })),
 
       toggleShuffle: () => {
@@ -259,7 +244,6 @@ export const useAudioPlayerStore = create<AudioPlayerState>()(
       },
 
       setRandomLoading: (v) => set({ randomLoading: v }),
-      setSource: (source) => set({ source }),
     }),
     {
       name: "ba-audio-player",
